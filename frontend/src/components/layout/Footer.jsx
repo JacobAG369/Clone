@@ -57,7 +57,7 @@ export function Footer() {
         </div>
         
         <div className="mt-12 pt-8 border-t border-slate-700 text-center text-sm text-slate-500">
-          <p>&copy; {new Date().getFullYear()} Tu-Turismo. Todos los derechos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} AdaptiCode. Todos los derechos reservados.</p>
         </div>
       </div>
     </footer>

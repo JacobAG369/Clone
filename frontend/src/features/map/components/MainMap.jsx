@@ -14,7 +14,7 @@ import FloatingFilters from './FloatingFilters';
 import { getCategoryIcon } from '../utils/icons';
 import PlaceDetailCard from './PlaceDetailCard';
 
-const LightTiles = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+const LightTiles = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
 const DarkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
 
 // Subcomponent to automatically fly to a location or fit bounds
@@ -75,7 +75,8 @@ function MarkersLayer({ markers, favoriteIds, onMarkerClick }) {
 }
 
 export default function MainMap() {
-  const mapTheme = useThemeStore((state) => state.mapTheme);
+  // Usa el theme de la app directamente: si el usuario desactiva dark mode, el mapa también cambia
+  const theme = useThemeStore((state) => state.theme);
   const { favoriteItems } = useFavorites();
   const { activeCategory, selectedMarkerId, setSelectedMarkerId } = useMapStore();
 
@@ -122,7 +123,7 @@ export default function MainMap() {
       >
         <TileLayer
           attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-          url={mapTheme === 'dark' ? DarkTiles : LightTiles}
+          url={theme === 'dark' ? DarkTiles : LightTiles}
         />
 
         <MarkersLayer markers={markers} favoriteIds={favoriteIds} onMarkerClick={setSelectedMarkerId} />

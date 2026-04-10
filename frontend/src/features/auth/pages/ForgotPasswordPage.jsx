@@ -36,19 +36,16 @@ export const ForgotPasswordPage = () => {
                 className="w-48 h-48 object-contain mb-6 drop-shadow-lg"
               />
               <h1 className="text-3xl font-bold text-white mb-4">Tu-Turismo</h1>
-              <p className="text-slate-300 text-sm leading-relaxed max-w-xs">
-                Recupera el acceso a tu cuenta en tres simples pasos.
-              </p>
+
 
               {/* Indicador de pasos */}
               <div className="flex items-center justify-center gap-2 mt-8">
                 {STEPS.map((s, i) => (
                   <div key={s.number} className="flex items-center gap-2">
-                    <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-colors ${
-                      step >= s.number
+                    <div className={`flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold transition-colors ${step >= s.number
                         ? 'bg-white text-slate-800'
                         : 'bg-white/20 text-white/60'
-                    }`}>
+                      }`}>
                       {s.number}
                     </div>
                     {i < STEPS.length - 1 && (

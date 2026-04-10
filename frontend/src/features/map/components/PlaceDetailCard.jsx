@@ -66,42 +66,45 @@ export default function PlaceDetailCard({ marker, onClose }) {
           
           <div className="flex items-center gap-2 text-base font-medium">
             <Star size={18} className="fill-current text-yellow-400" />
-            <span className="text-yellow-500">{marker.rating || '4.8'}</span>
+            <span className="text-yellow-500">{marker.rating ? marker.rating.toFixed(1) : '-'}</span>
             <span className="text-slate-400 dark:text-slate-500 ml-1 text-sm font-normal">
-              ({marker.reviews_count || '120'} reseñas)
+              ({marker.reviews_count ?? 0} reseñas)
             </span>
           </div>
 
           <p className="text-slate-600 dark:text-slate-300 text-sm leading-relaxed">
-            {marker.descripcion || 'Descubre más sobre este increíble lugar y planifica tu visita en Tu-Turismo.'}
+            {marker.descripcion || 'Sin descripción disponible.'}
           </p>
 
           {/* Info Items */}
           <div className="space-y-3 mt-2 border-t border-slate-200 dark:border-slate-700 pt-4">
-            <div className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
-              <MapPin size={18} className="text-brand-500 mt-0.5 shrink-0" />
-              <span className="line-clamp-3">{marker.direccion || 'Dirección no disponible'}</span>
-            </div>
-
-            {(marker.horario || marker.tipo === 'restaurante') && (
-              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
-                <Clock size={18} className="text-brand-500 shrink-0" />
-                <span>{marker.horario || '09:00 - 18:00'}</span>
+            
+            {(marker.direccion || marker.lugar_nombre) && (
+              <div className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+                <MapPin size={18} className="text-brand-500 mt-0.5 shrink-0" />
+                <span className="line-clamp-3">{marker.direccion || marker.lugar_nombre}</span>
               </div>
             )}
 
-            {(marker.telefono || marker.tipo === 'hotel') && (
+            {marker.horario && (
+              <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                <Clock size={18} className="text-brand-500 shrink-0" />
+                <span>{marker.horario}</span>
+              </div>
+            )}
+
+            {marker.telefono && (
               <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                 <Phone size={18} className="text-brand-500 shrink-0" />
-                <span>{marker.telefono || '+52 123 456 7890'}</span>
+                <span>{marker.telefono}</span>
               </div>
             )}
             
-            {(marker.sitio_web || marker.tipo === 'lugar') && (
+            {marker.sitio_web && (
               <div className="flex items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
                 <Globe size={18} className="text-brand-500 shrink-0" />
-                <a href={marker.sitio_web || '#'} target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:text-brand-600 hover:underline">
-                  {marker.sitio_web || 'Visitar sitio web'}
+                <a href={marker.sitio_web} target="_blank" rel="noopener noreferrer" className="text-brand-500 hover:text-brand-600 hover:underline">
+                  Visitar sitio web
                 </a>
               </div>
             )}

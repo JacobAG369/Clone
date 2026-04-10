@@ -1,9 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import { getEventosProximos } from '../../api/home';
 import { EventoCard } from '../../components/ui/cards/EventoCard';
 import { SkeletonCard } from '../../components/ui/cards/SkeletonCard';
+import { useMapStore } from '../../store/useMapStore';
 
 export const EventosSection = () => {
+  const setActiveCategory = useMapStore((s) => s.setActiveCategory);
   const { data: eventos, isLoading, isError } = useQuery({
     queryKey: ['eventos', 'proximos'],
     queryFn: getEventosProximos
@@ -17,9 +20,13 @@ export const EventosSection = () => {
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white font-outfit tracking-tight">Próximos Eventos</h2>
             <p className="text-slate-500 dark:text-slate-400 mt-2">No te pierdas de las actividades locales</p>
           </div>
-          <button className="hidden sm:block text-primary-600 dark:text-primary-400 font-medium hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+          <Link
+            to="/map"
+            onClick={() => setActiveCategory('eventos')}
+            className="hidden sm:block text-primary-600 dark:text-primary-400 font-medium hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+          >
             Ver agenda
-          </button>
+          </Link>
         </div>
         
         {isError && (
@@ -36,21 +43,31 @@ export const EventosSection = () => {
               <EventoCard 
                 key={evento._id || evento.id}
                 id={evento._id || evento.id}
-                title={evento.titulo || evento.nombre}
-                image={evento.imagenes?.[0] || evento.imagen_principal}
-                date={evento.fecha_inicio ? new Date(evento.fecha_inicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' }) : 'Próximamente'}
-                location={evento.ubicacion?.direccion || evento.ubicacion_texto}
-                category="Evento"
-                coords={evento.ubicacion?.coordenadas || { lat: 20.6596, lng: -103.2494 }}
+                title={evento.nombre}
+                image={evento.imagenes?.[0]}
+                date={evento.fecha_inicio
+                  ? new Date(evento.fecha_inicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+                  : evento.fecha
+                  ? new Date(evento.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
+                  : 'Próximamente'}
+                location={evento.lugar_nombre || evento.direccion}
+                category={evento.estado || 'Evento'}
+                coords={evento.ubicacion?.coordinates
+                  ? { lat: evento.ubicacion.coordinates[1], lng: evento.ubicacion.coordinates[0] }
+                  : null}
               />
             ))
           )}
         </div>
         
         <div className="mt-8 text-center sm:hidden">
-          <button className="text-primary-600 dark:text-primary-400 font-medium hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+          <Link
+            to="/map"
+            onClick={() => setActiveCategory('eventos')}
+            className="text-primary-600 dark:text-primary-400 font-medium hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
+          >
             Ver todos los eventos
-          </button>
+          </Link>
         </div>
       </div>
     </section>
