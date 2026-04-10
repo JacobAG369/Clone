@@ -2,42 +2,72 @@ const SECTIONS = [
   {
     id: 'aceptacion',
     title: '1. Aceptación de los Términos',
-    content: `Al acceder y utilizar la plataforma Tu-Turismo, el usuario acepta de manera íntegra y sin reservas los presentes Términos y Condiciones. Si no está de acuerdo con alguna parte de estos términos, le pedimos que no utilice nuestros servicios. El uso continuado de la plataforma después de cualquier modificación a estos términos constituye su aceptación de los mismos.`,
+    content: `El uso de Tu‑Turismo implica la aceptación plena de estos Términos y Condiciones. Si no está de acuerdo con ellos, le solicitamos no utilizar la plataforma ni sus servicios asociados.`,
   },
   {
-    id: 'servicios',
-    title: '2. Descripción de los Servicios',
-    content: `Tu-Turismo es una plataforma digital que conecta a los usuarios con información turística verificada sobre lugares, eventos, restaurantes y tours en Jalisco, México. Los servicios incluyen: exploración de destinos a través de mapa interactivo, gestión de favoritos, sistema de notificaciones personalizadas y acceso a reseñas y valoraciones.`,
+    id: 'definiciones',
+    title: '2. Definiciones',
+    content: `• Usuario: Persona física que utiliza la plataforma para consultar información turística, reservar servicios o adquirir experiencias.\n• Proveedor: Prestador de servicios turísticos registrado en la plataforma (hoteles, agencias, guías, transportistas, etc.).\n• Kiosco Tu‑Turismo: Dispositivo físico instalado por entidades gubernamentales o privadas para consulta pública de información turística.\n• AdaptiCode S.A. de C.V.: Empresa desarrolladora y propietaria del software Tu‑Turismo.`,
   },
   {
-    id: 'cuenta',
-    title: '3. Registro y Cuenta de Usuario',
-    content: `Para acceder a ciertas funcionalidades es necesario crear una cuenta. El usuario es responsable de mantener la confidencialidad de sus credenciales y de todas las actividades que ocurran bajo su cuenta. Debe notificarnos inmediatamente ante cualquier uso no autorizado. Tu-Turismo no será responsable por pérdidas derivadas del uso no autorizado de su cuenta.`,
+    id: 'uso',
+    title: '3. Uso de la Plataforma',
+    content: `El usuario se compromete a: utilizar la plataforma únicamente para fines lícitos, proporcionar información veraz y actualizada, no interferir con la operación del sistema, sus servidores o redes, y no intentar acceder sin autorización a módulos administrativos o funciones restringidas.\n\nQueda estrictamente prohibido: replicar, modificar, descompilar o extraer código del sistema, y realizar ataques informáticos o actividades que comprometan la confidencialidad, integridad o disponibilidad del servicio.`,
   },
   {
-    id: 'conducta',
-    title: '4. Conducta del Usuario',
-    content: `El usuario se compromete a utilizar la plataforma de manera lícita y responsable. Está prohibido: publicar contenido falso o engañoso, acosar o amenazar a otros usuarios, intentar acceder sin autorización a sistemas de la plataforma, usar la plataforma para actividades comerciales no autorizadas, y violar derechos de propiedad intelectual de terceros.`,
+    id: 'registro',
+    title: '4. Registro y Credenciales de Acceso',
+    content: `Para acceder a ciertas funciones (historial, promociones), el usuario deberá crear una cuenta. El usuario es responsable de mantener confidenciales sus credenciales y de notificar de inmediato cualquier acceso no autorizado. Tu‑Turismo implementa hashing seguro (bcrypt/Argon2) y cifrado TLS para proteger las credenciales.`,
+  },
+  {
+    id: 'pagos',
+    title: '5. Reservaciones y Pagos',
+    content: `Las reservaciones realizadas mediante Tu‑Turismo se sujetan a la disponibilidad y políticas del Proveedor correspondiente.\n\nPagos: Los pagos se procesan mediante pasarelas externas certificadas. Tu‑Turismo no almacena datos completos de tarjetas bancarias. Las cancelaciones o reembolsos se rigen por las políticas del proveedor del servicio turístico.`,
+  },
+  {
+    id: 'responsabilidad-adapticode',
+    title: '6. Responsabilidad de AdaptiCode S.A. de C.V.',
+    content: `AdaptiCode es responsable del correcto funcionamiento del software entregado, salvo los casos establecidos en este documento.\n\nDeslinde de responsabilidad: Una vez entregado e instalado el kiosco o la plataforma, el uso, mantenimiento, cuidado físico y operación del equipo es responsabilidad de la entidad propietaria (ej. Secretaría de Turismo). AdaptiCode no se hace responsable por daños, fallas, manipulaciones no autorizadas, interrupciones eléctricas o modificaciones realizadas por terceros. El soporte técnico solo se brindará bajo acuerdos previamente establecidos.`,
+  },
+  {
+    id: 'responsabilidad-proveedores',
+    title: '7. Responsabilidad de Proveedores Turísticos',
+    content: `Tu‑Turismo actúa como intermediario tecnológico. Los proveedores son únicos responsables de: la calidad de los servicios turísticos, información publicada (precios, descripciones, restricciones) y el cumplimiento de normativas locales y federales. Tu‑Turismo no garantiza la precisión de la información proporcionada por terceros.`,
+  },
+  {
+    id: 'proteccion-datos',
+    title: '8. Protección de Datos Personales',
+    content: `El tratamiento de datos se realiza conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP).\n\nDatos recabados: Nombre, correo, teléfono, preferencias turísticas e información de facturación. Datos sensibles solo bajo consentimiento explícito.\n\nSeguridad: Tu‑Turismo implementa múltiples capas de protección como cifrado TLS/HTTPS para datos en tránsito, AES‑256 para información en reposo, hashing bcrypt/Argon2 para contraseñas, gestión de sesiones con JWT y auditoría basada en Blockchain para accesos y acciones críticas. El usuario puede ejercer sus derechos ARCO mediante los canales establecidos en el Aviso de Privacidad.`,
+  },
+  {
+    id: 'cookies',
+    title: '9. Cookies y Tecnologías de Seguimiento',
+    content: `Tu‑Turismo utiliza cookies para mejorar la experiencia. Tipos de cookies utilizadas: estrictamente necesarias, funcionales, de análisis (no identifican personalmente) y de marketing (solo con consentimiento explícito). El usuario puede deshabilitarlas en cualquier momento.`,
   },
   {
     id: 'propiedad',
-    title: '5. Propiedad Intelectual',
-    content: `Todo el contenido presente en Tu-Turismo, incluyendo textos, imágenes, logotipos, diseños y software, está protegido por derechos de autor y otras leyes de propiedad intelectual. El usuario no podrá reproducir, distribuir, modificar o crear obras derivadas sin autorización expresa y por escrito de Tu-Turismo.`,
+    title: '10. Propiedad Intelectual',
+    content: `Todo el contenido, interfaz, código, diseño, logotipos y elementos visuales de Tu‑Turismo son propiedad de AdaptiCode S.A. de C.V. Se prohíbe su copia, distribución o uso sin autorización expresa.`,
   },
   {
     id: 'limitacion',
-    title: '6. Limitación de Responsabilidad',
-    content: `Tu-Turismo no garantiza la exactitud, integridad o actualidad de la información proporcionada por los establecimientos. La plataforma no se hace responsable de daños directos, indirectos, incidentales o consecuentes derivados del uso o imposibilidad de uso de los servicios. Las calificaciones y reseñas reflejan opiniones individuales de los usuarios.`,
+    title: '11. Limitación de Responsabilidad',
+    content: `Tu‑Turismo no garantiza que el servicio estará libre de errores o interrupciones, ni que la información publicada por proveedores sea exacta. En ningún caso Tu‑Turismo o AdaptiCode serán responsables por pérdida de datos por causas externas, fallas ocasionadas por terceros, equipos externos o redes ajenas, ni daños indirectos, incidentales o consecuenciales.`,
   },
   {
-    id: 'modificaciones',
-    title: '7. Modificaciones',
-    content: `Tu-Turismo se reserva el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios entrarán en vigor a los 15 días de su publicación en la plataforma. Si continúa utilizando el servicio después de dicha fecha, se considerará que ha aceptado los nuevos términos.`,
+    id: 'actualizaciones',
+    title: '12. Actualizaciones del Servicio',
+    content: `AdaptiCode se reserva el derecho de modificar funciones, implementar mejoras y actualizar componentes de seguridad sin necesidad de previo aviso cuando las actualizaciones sean necesarias para proteger al usuario o mejorar el rendimiento.`,
+  },
+  {
+    id: 'terminacion',
+    title: '13. Terminación de Cuenta',
+    content: `La plataforma podrá suspender o cancelar cuentas cuando haya indicios de uso indebido, se detecten actividades maliciosas o se incumplan estos Términos y Condiciones.`,
   },
   {
     id: 'jurisdiccion',
-    title: '8. Jurisdicción Aplicable',
-    content: `Estos Términos y Condiciones se rigen por las leyes de los Estados Unidos Mexicanos. Cualquier disputa que surja en relación con estos términos será sometida a la jurisdicción de los tribunales competentes del estado de Jalisco, México.`,
+    title: '14. Legislación Aplicable y Jurisdicción',
+    content: `Este documento se rige bajo las leyes de los Estados Unidos Mexicanos. Cualquier controversia se resolverá ante tribunales de Guadalajara, Jalisco, salvo acuerdo distinto entre las partes.`,
   },
 ];
 
@@ -51,11 +81,11 @@ export function TerminosPage() {
         </div>
         <div className="relative container mx-auto px-6 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-violet-400 mb-4">Legal</p>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Términos y Condiciones</h1>
-          <p className="text-slate-300 text-lg max-w-xl mx-auto">
-            Por favor lee estos términos detenidamente antes de utilizar Tu-Turismo.
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Términos y Condiciones de Uso</h1>
+          <p className="text-slate-300 text-lg max-w-2xl mx-auto leading-relaxed">
+            Bienvenido(a) a Tu‑Turismo, una plataforma digital desarrollada por AdaptiCode S.A. de C.V. para la gestión, reservación y consulta de experiencias turísticas mediante su sitio web y kioscos interactivos.
           </p>
-          <p className="text-slate-500 text-sm mt-4">Última actualización: abril de 2026</p>
+          <p className="text-slate-500 text-sm mt-6">Última actualización: 18 de noviembre de 2025</p>
         </div>
       </section>
 
@@ -66,18 +96,17 @@ export function TerminosPage() {
             {/* Index */}
             <div className="p-8 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80">
               <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Contenido</h2>
-              <ul className="space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
                 {SECTIONS.map((s) => (
-                  <li key={s.id}>
-                    <a
-                      href={`#${s.id}`}
-                      className="text-sm text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors"
-                    >
-                      {s.title}
-                    </a>
-                  </li>
+                  <a
+                    key={s.id}
+                    href={`#${s.id}`}
+                    className="text-sm text-slate-600 dark:text-slate-400 hover:text-cyan-500 dark:hover:text-cyan-400 transition-colors"
+                  >
+                    {s.title}
+                  </a>
                 ))}
-              </ul>
+              </div>
             </div>
 
             {/* Sections */}
@@ -85,7 +114,7 @@ export function TerminosPage() {
               {SECTIONS.map((s, idx) => (
                 <div key={s.id} id={s.id}>
                   <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{s.title}</h2>
-                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm">{s.content}</p>
+                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed text-sm whitespace-pre-wrap">{s.content}</p>
                   {idx < SECTIONS.length - 1 && (
                     <hr className="mt-10 border-slate-200 dark:border-slate-700" />
                   )}
@@ -95,10 +124,7 @@ export function TerminosPage() {
           </div>
 
           <p className="text-center text-sm text-slate-400 mt-8">
-            Si tienes preguntas, contáctanos en{' '}
-            <a href="mailto:contacto@tu-turismo.com" className="text-cyan-500 hover:underline">
-              contacto@tu-turismo.com
-            </a>
+             Al acceder, navegar o utilizar cualquiera de nuestros servicios, usted acepta cumplir los presentes Términos y Condiciones, así como el Aviso de Privacidad correspondiente.
           </p>
         </div>
       </section>

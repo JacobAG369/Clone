@@ -1,4 +1,10 @@
 import { MapPin, Users, Star, Globe } from 'lucide-react';
+import evelynImg from '../../../assets/team/evelyn.jpeg';
+import fabianImg from '../../../assets/team/fabian.jpeg';
+import jesusImg from '../../../assets/team/jesus.jpeg';
+import jimmyImg from '../../../assets/team/jimmy.png';
+import oscarImg from '../../../assets/team/oscar.png';
+import samuelImg from '../../../assets/team/samuel.png';
 
 const values = [
   {
@@ -31,6 +37,39 @@ const values = [
   },
 ];
 
+const team = [
+  {
+    name: 'Evelyn Estrada Medina',
+    role: 'Front-End Developer',
+    img: evelynImg,
+  },
+  {
+    name: 'Jimmy Aviña Gómez',
+    role: 'Data Scientist',
+    img: jimmyImg,
+  },
+  {
+    name: 'Jesús Aviña Alcalá',
+    role: 'Backend Developer',
+    img: jesusImg,
+  },
+  {
+    name: 'Samuel Osuna Medina',
+    role: 'Project Manager, Backend Developer',
+    img: samuelImg,
+  },
+  {
+    name: 'Oscar Alberto Serna Morán',
+    role: 'UX/UI Design Lead',
+    img: oscarImg,
+  },
+  {
+    name: 'José Fabián López Castillo',
+    role: 'Documentation Leader',
+    img: fabianImg,
+  },
+];
+
 export function AcercaDePage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -46,7 +85,7 @@ export function AcercaDePage() {
             Acerca de <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-400">Tu-Turismo</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Somos una plataforma digital nacida en Jalisco con la misión de transformar la manera en que las personas descubren y disfrutan los destinos turísticos de México.
+            Somos una plataforma digital desarrollada como proyecto académico por estudiantes de la Universidad Tecnológica de la Zona Metropolitana de Guadalajara (UTZMG).
           </p>
         </div>
       </section>
@@ -57,10 +96,10 @@ export function AcercaDePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Nuestra Misión</h2>
             <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
-              Tu-Turismo nació con el propósito de acercar a los viajeros con la riqueza cultural, gastronómica y natural de Jalisco. Creemos que cada rincón merece ser descubierto, y cada historia merece ser contada.
-            </p>
-            <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed mt-4">
-              Desde monumentos históricos hasta restaurantes familiares, desde eventos culturales hasta tours especializados, nuestra plataforma centraliza toda la información que necesitas para vivir una experiencia turística completa e inolvidable.
+              Tu-Turismo nace como una iniciativa estudiantil bajo el equipo de desarrollo
+              <strong> AdaptiCode</strong>, con el propósito de acercar a los viajeros con la riqueza cultural, 
+              gastronómica y natural de Jalisco. Creemos que la innovación tecnológica puede potenciar
+              el descubrimiento turístico con un enfoque moderno.
             </p>
           </div>
         </div>
@@ -95,17 +134,33 @@ export function AcercaDePage() {
 
       {/* Team */}
       <section className="py-20 bg-white dark:bg-slate-800/40">
-        <div className="container mx-auto px-6 max-w-4xl text-center">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-6">Nuestro Equipo</h2>
-          <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed mb-4">
-            Somos un equipo apasionado de desarrolladores, diseñadores y entusiastas del turismo, comprometidos con ofrecer la mejor experiencia posible a nuestros usuarios.
-          </p>
-          <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed">
-            Trabajamos desde Jalisco, México, y tenemos la visión de expandir Tu-Turismo a todos los rincones del país.
-          </p>
-          <div className="mt-10 inline-flex items-center gap-3 px-6 py-3 rounded-full bg-gradient-to-r from-cyan-500 to-violet-500 text-white font-semibold shadow-lg shadow-cyan-500/20">
-            <MapPin className="w-5 h-5" />
-            Casa Samy en Banús, Jalisco, México
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
+              Equipo de Desarrollo - <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-violet-500">AdaptiCode</span>
+            </h2>
+            <p className="text-slate-600 dark:text-slate-300 text-lg leading-relaxed max-w-2xl mx-auto">
+              Somos un equipo multidisciplinario de la Universidad Tecnológica de la Zona Metropolitana de Guadalajara (UTZMG), comprometidos con el desarrollo tecnológico de excelencia.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+            {team.map((member) => (
+              <div key={member.name} className="flex flex-col items-center text-center group">
+                <div className="w-40 h-40 mb-6 rounded-3xl overflow-hidden bg-slate-200 dark:bg-slate-700 border-4 border-slate-50 dark:border-slate-800 shadow-xl transition-transform duration-300 group-hover:-translate-y-2">
+                  <img src={member.img} alt={member.name} className="w-full h-full object-cover" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-1">{member.name}</h3>
+                <p className="text-sm font-medium text-cyan-600 dark:text-cyan-400 uppercase tracking-wide">{member.role}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-20 text-center flex flex-col items-center">
+            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-medium">
+              <MapPin className="w-5 h-5 text-cyan-500" />
+              Carretera Santa Cruz-San Isidro Km. 4.5, 45644 Santa Cruz de las Flores, Jal.
+            </div>
           </div>
         </div>
       </section>

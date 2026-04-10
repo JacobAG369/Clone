@@ -3,29 +3,29 @@ import { Shield, Lock, Eye, Database } from 'lucide-react';
 const HIGHLIGHTS = [
   {
     icon: Shield,
-    title: 'Protección de datos',
-    description: 'Tus datos son cifrados y almacenados de forma segura conforme a las normativas vigentes.',
+    title: 'Protección con la LFPDPPP',
+    description: 'Implementamos nuestra plataforma conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares.',
     color: 'text-cyan-500',
     bg: 'bg-cyan-50 dark:bg-cyan-900/20',
   },
   {
     icon: Lock,
-    title: 'Privacidad garantizada',
-    description: 'Nunca vendemos ni compartimos tu información personal con terceros sin tu consentimiento.',
+    title: 'Seguridad multicapa',
+    description: 'Cifrado de datos en tránsito, almacenamiento seguro de contraseñas y uso de servidores seguros con monitoreo constante.',
     color: 'text-violet-500',
     bg: 'bg-violet-50 dark:bg-violet-900/20',
   },
   {
     icon: Eye,
-    title: 'Control total',
-    description: 'Tú decides qué información compartes y puedes eliminar tu cuenta y datos en cualquier momento.',
+    title: 'Derechos ARCO',
+    description: 'Puedes ejercer tus derechos de Acceso, Rectificación, Cancelación y Oposición sobre tus datos personales.',
     color: 'text-emerald-500',
     bg: 'bg-emerald-50 dark:bg-emerald-900/20',
   },
   {
     icon: Database,
     title: 'Mínimo necesario',
-    description: 'Solo recopilamos los datos estrictamente necesarios para ofrecerte una experiencia personalizada.',
+    description: 'Solo recolectamos la información personal y sensible estrictamente necesaria con fines específicos.',
     color: 'text-amber-500',
     bg: 'bg-amber-50 dark:bg-amber-900/20',
   },
@@ -33,66 +33,45 @@ const HIGHLIGHTS = [
 
 const SECTIONS = [
   {
-    title: '1. Información que Recopilamos',
+    title: '1. Datos Personales y Sensibles Tratados',
     content: [
-      'Datos de registro: nombre, apellido, correo electrónico y contraseña (almacenada con hash seguro).',
-      'Datos de uso: páginas visitadas, lugares favoritos, interacciones con el mapa.',
-      'Datos técnicos: dirección IP, tipo de navegador y sistema operativo para diagnóstico de errores.',
-      'Cookies y tecnologías similares para mantener tu sesión activa.',
+      'Datos personales tratados: Nombre completo, correo electrónico, número telefónico, RFC y datos de facturación, y preferencias de aplicación de viajes.',
+      'Los datos bancarios son procesados mediante una pasarela de pagos y no son almacenados en Tu-Turismo.',
+      'Datos personales sensibles: Se evitan recabar siempre que sea posible. Solo se tratan bajo consentimiento explícito para fines específicos, como información relacionada con salud o condiciones alimentarias si se requieren servicios turísticos específicos o datos financieros completos solo cuando sean estrictamente necesarios para pagos.',
+      'El sistema recaba datos de Usuarios/Clientes (personas físicas que contratan servicios turísticos) y Proveedores/Prestadores de servicios turísticos.',
     ],
   },
   {
-    title: '2. Cómo Usamos tu Información',
+    title: '2. Finalidades del Tratamiento',
     content: [
-      'Proporcionar y mejorar los servicios de Tu-Turismo.',
-      'Personalizar tu experiencia mostrando contenido relevante.',
-      'Enviarte notificaciones sobre nuevos lugares, eventos o actualizaciones.',
-      'Garantizar la seguridad y prevenir el uso fraudulento.',
-      'Generar estadísticas anónimas para mejorar la plataforma.',
+      'El tratamiento de los datos es necesario para ofrecer servicios turísticos personalizados y cumplir con obligaciones legales y contractuales.',
+      'Procesar reservaciones y emitir comprobantes fiscales.',
+      'Contactar a usuarios para confirmaciones.',
+      'Enviar promociones (previo consentimiento).',
     ],
   },
   {
-    title: '3. Compartir Información',
+    title: '3. Transferencias de Datos Personales',
     content: [
-      'No vendemos, alquilamos ni compartimos tu información personal con terceros con fines comerciales.',
-      'Podemos compartir datos con proveedores de servicios técnicos (hosting, analítica) bajo estrictos acuerdos de confidencialidad.',
-      'Podemos divulgar información cuando sea requerido por ley o autoridad competente.',
+      'Tu-Turismo solo transfiere datos a Prestadores de servicios turísticos (hoteles, agencias de transporte, guías) con la finalidad de cumplir la reserva solicitada por el usuario, conforme al Artículo 37 de la LFPDPPP.',
+      'Los datos transferidos incluyen nombre, correo electrónico, teléfono y detalles de reservación.',
     ],
   },
   {
-    title: '4. Tus Derechos',
+    title: '4. Medios de Seguridad para la Información',
     content: [
-      'Acceso: solicitar una copia de los datos que tenemos sobre ti.',
-      'Rectificación: corregir datos incorrectos o incompletos.',
-      'Eliminación: solicitar la eliminación de tu cuenta y datos personales.',
-      'Portabilidad: recibir tus datos en un formato estructurado.',
-      'Oposición: oponerte al procesamiento de tus datos en ciertos casos.',
+      'Cifrado de datos en tránsito (TLS/SSL) y almacenamiento cifrado de contraseñas.',
+      'Control de acceso restringido a empleados autorizados.',
+      'Uso de servidores seguros y monitoreo constante de posibles vulneraciones.',
+      'Implementación de copias de seguridad periódicas.',
+      'Contratos con proveedores que contienen cláusulas de confidencialidad y cumplen estrictamente con normas de protección.',
     ],
   },
   {
-    title: '5. Seguridad',
+    title: '5. Uso de Cookies',
     content: [
-      'Utilizamos cifrado SSL/TLS para todas las comunicaciones.',
-      'Las contraseñas se almacenan con algoritmos de hash seguros (bcrypt).',
-      'Acceso restringido a datos personales solo para personal autorizado.',
-      'Revisiones periódicas de seguridad y auditorías.',
-    ],
-  },
-  {
-    title: '6. Cookies',
-    content: [
-      'Utilizamos cookies esenciales para el funcionamiento de la sesión.',
-      'Cookies de preferencia para recordar tu configuración (tema, idioma).',
-      'No utilizamos cookies de rastreo de terceros para publicidad.',
-      'Puedes gestionar las cookies desde la configuración de tu navegador.',
-    ],
-  },
-  {
-    title: '7. Cambios a esta Política',
-    content: [
-      'Podemos actualizar esta política periódicamente.',
-      'Te notificaremos por correo electrónico o mediante un aviso en la plataforma ante cambios significativos.',
-      'La fecha de última actualización aparece al inicio del documento.',
+      'Tu-Turismo utiliza cookies para mejorar la experiencia, clasificándolas en: estrictamente necesarias, de funcionalidad, de análisis (sin identificar personalmente al usuario) y de marketing (solo con consentimiento explícito).',
+      'El uso de cookies y el tratamiento de datos sensibles se realiza únicamente con el consentimiento explícito del usuario, el cual puede ser revocado en cualquier momento.',
     ],
   },
 ];
@@ -107,18 +86,23 @@ export function PrivacidadPage() {
         </div>
         <div className="relative container mx-auto px-6 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.25em] text-emerald-400 mb-4">Transparencia</p>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Política de Privacidad</h1>
-          <p className="text-slate-300 text-lg max-w-xl mx-auto">
-            Tu privacidad es nuestra prioridad. Aquí te explicamos cómo cuidamos tu información.
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4">Aviso de Privacidad y Confidencialidad</h1>
+          <p className="text-slate-300 text-lg max-w-3xl mx-auto leading-relaxed">
+            El proyecto "Tu-Turismo", plataforma digital para reservación y gestión de experiencias turísticas, se implementa conforme a la Ley Federal de Protección de Datos Personales en Posesión de los Particulares (LFPDPPP), su Reglamento y los Lineamientos del Aviso de Privacidad emitidos por el INAI.
           </p>
-          <p className="text-slate-500 text-sm mt-4">Última actualización: abril de 2026</p>
         </div>
       </section>
 
       {/* Highlights */}
       <section className="py-14 bg-white dark:bg-slate-800/40">
         <div className="container mx-auto px-6 max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="text-center mb-10 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">Objetivos del Aviso</h2>
+            <p className="text-slate-600 dark:text-slate-300">
+              Recolectar y procesar únicamente la información personal necesaria, garantizar la seguridad técnica y administrativa en el tratamiento de los datos personales, y facilitar el ejercicio de los derechos ARCO a los titulares.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
             {HIGHLIGHTS.map((h) => {
               const Icon = h.icon;
               return (
@@ -148,19 +132,12 @@ export function PrivacidadPage() {
                 {s.content.map((item, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
                     <span className="mt-1.5 flex-shrink-0 w-2 h-2 rounded-full bg-cyan-500" />
-                    {item}
+                    <span className="leading-relaxed">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
-
-          <p className="text-center text-sm text-slate-400 pt-4">
-            Para ejercer tus derechos o resolver dudas, escríbenos a{' '}
-            <a href="mailto:contacto@tu-turismo.com" className="text-cyan-500 hover:underline">
-              contacto@tu-turismo.com
-            </a>
-          </p>
         </div>
       </section>
     </div>

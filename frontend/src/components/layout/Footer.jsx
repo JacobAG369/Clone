@@ -75,13 +75,13 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Contacto</h3>
             <ul className="space-y-3 text-sm">
-              <li className="flex items-center gap-3">
-                <MapPin className="w-5 h-5 text-primary" />
-                <span>Casa Samy en Banús</span>
+              <li className="flex items-start gap-3">
+                <MapPin className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <span>Carretera Santa Cruz-San Isidro Km. 4.5, 45644 Santa Cruz de las Flores, Jal.</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>3340721835</span>
+                <span>33 40 72 18 35</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary" />
@@ -90,7 +90,7 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        
+
         <div className="mt-12 pt-8 border-t border-slate-700 text-center text-sm text-slate-500">
           <p>&copy; {new Date().getFullYear()} AdaptiCode. Todos los derechos reservados.</p>
         </div>
