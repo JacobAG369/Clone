@@ -42,22 +42,23 @@ export function BackupManager() {
   const handleCreateBackup = async (type) => {
     setIsBackingUp(true);
     try {
-      const result = await adminApi.createBackup(type);
-      
-      const newBackup = {
-        id: result.filename,
-        type: type,
-        timestamp: new Date(),
-        status: 'completado',
-        size: 0, // No disponemos del tamaño inmediato desde create pero se listará en el próximo refresh
-        url: result.url
-      };
-      
-      setBackups((prev) => [newBackup, ...prev]);
-      
+      const blob = await adminApi.createBackup(type);
+
+      // Crear un enlace temporal y disparar descarga
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const filename = `backup_${type}_${timestamp}.zip`;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+
       toast({
-        title: 'Backup creado',
-        description: `Backup ${type === 'full' ? 'completo' : 'de ' + type} creado exitosamente.`,
+        title: 'Backup descargado',
+        description: `Backup ${type === 'full' ? 'completo' : 'de ' + type} descargado exitosamente.`,
       });
     } catch (_error) {
       toast({

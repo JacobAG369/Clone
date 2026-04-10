@@ -93,9 +93,12 @@ export const adminApi = {
   },
 
   // Backup methods
+  // El backend devuelve el ZIP directamente como stream (responseType: 'blob')
   createBackup: async (type = 'full') => {
-    const response = await api.post('/admin/backup', { type });
-    return response.data.data;
+    const response = await api.post('/admin/backup', { type }, {
+      responseType: 'blob',
+    });
+    return response.data; // Blob binario del ZIP
   },
 
   downloadBackup: async (backupId) => {
