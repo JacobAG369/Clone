@@ -156,10 +156,10 @@ export function AdminDashboardPage() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
       <div className="container mx-auto max-w-7xl px-4 py-10">
         {/* Header */}
-        <div className="mb-10">
+        <div className="mb-10 text-center">
           <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-400">Panel administrativo</p>
           <h1 className="mt-2 text-4xl font-bold text-slate-900 dark:text-white">Dashboard</h1>
-          <p className="mt-3 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
             Gestiona tu contenido, usuarios y copia de seguridad de Tu-Turismo en un único lugar.
           </p>
         </div>
@@ -172,7 +172,7 @@ export function AdminDashboardPage() {
 
             {/* Quick Access Buttons */}
             <div>
-              <h2 className="mb-6 text-xl font-bold text-slate-900 dark:text-white">Accesos Rápidos</h2>
+              <h2 className="mb-6 text-xl font-bold text-slate-900 dark:text-white text-center">Accesos Rápidos</h2>
               <QuickAccessButtons
                 onUsersCRUD={handleQuickAccessUsers}
                 onResourcesCRUD={handleQuickAccessResources}

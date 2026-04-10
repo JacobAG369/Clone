@@ -1,5 +1,5 @@
 import { Outlet, useRouterState } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Footer } from './Footer';
 import { Header } from './Header';
 import { useFavorites } from '../../hooks/useFavorites';
@@ -8,12 +8,22 @@ import { ToastViewport } from '../ui/toast';
 
 export function AppLayout() {
   const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
   const isMapRoute = pathname.startsWith('/map');
+  const prevIsMapRoute = useRef(isMapRoute);
 
   useFavorites();
+
+  // Restore light theme when leaving the map
+  useEffect(() => {
+    if (prevIsMapRoute.current && !isMapRoute) {
+      setTheme('light');
+    }
+    prevIsMapRoute.current = isMapRoute;
+  }, [isMapRoute, setTheme]);
 
   useEffect(() => {
     if (theme === 'dark') {

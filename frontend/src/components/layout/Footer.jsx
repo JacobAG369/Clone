@@ -1,7 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { Mail, MapPin, Phone } from 'lucide-react';
+import { useMapStore } from '../../store/useMapStore';
 
 export function Footer() {
+  const setActiveCategory = useMapStore((state) => state.setActiveCategory);
+
   return (
     <footer className="bg-slate-800 text-slate-300 py-12 border-t border-slate-700 mt-auto">
       <div className="container mx-auto px-6">
@@ -18,10 +21,42 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Enlaces Rápidos</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/" className="hover:text-primary transition-colors">Lugares Populares</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Próximos Eventos</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Restaurantes Recomendados</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Tours Guiados</Link></li>
+              <li>
+                <Link
+                  to="/map"
+                  onClick={() => setActiveCategory('lugares')}
+                  className="hover:text-primary transition-colors"
+                >
+                  Lugares Populares
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/map"
+                  onClick={() => setActiveCategory('eventos')}
+                  className="hover:text-primary transition-colors"
+                >
+                  Próximos Eventos
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/map"
+                  onClick={() => setActiveCategory('restaurantes')}
+                  className="hover:text-primary transition-colors"
+                >
+                  Restaurantes Recomendados
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/map"
+                  onClick={() => setActiveCategory('eventos')}
+                  className="hover:text-primary transition-colors"
+                >
+                  Tours Guiados
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -29,10 +64,10 @@ export function Footer() {
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-white">Información</h3>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/" className="hover:text-primary transition-colors">Acerca de nosotros</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Términos y condiciones</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Política de privacidad</Link></li>
-              <li><Link to="/" className="hover:text-primary transition-colors">Preguntas frecuentes</Link></li>
+              <li><Link to="/acerca" className="hover:text-primary transition-colors">Acerca de nosotros</Link></li>
+              <li><Link to="/terminos" className="hover:text-primary transition-colors">Términos y condiciones</Link></li>
+              <li><Link to="/privacidad" className="hover:text-primary transition-colors">Política de privacidad</Link></li>
+              <li><Link to="/faq" className="hover:text-primary transition-colors">Preguntas frecuentes</Link></li>
             </ul>
           </div>
 
@@ -42,11 +77,11 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-3">
                 <MapPin className="w-5 h-5 text-primary" />
-                <span>Guadalajara, Jalisco, México</span>
+                <span>Casa Samy en Banús</span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-primary" />
-                <span>+52 (33) 1234 5678</span>
+                <span>3340721835</span>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-primary" />

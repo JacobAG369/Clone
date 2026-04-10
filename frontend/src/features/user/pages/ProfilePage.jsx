@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { Settings, LogOut, MapPin, Mail, Phone, User, Calendar, Star } from 'lucide-react';
 import { Link, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useLogoutMutation } from '../../auth/hooks/useLogoutMutation';
 import { getFavoritePlaces, getFavoriteEvents } from '../../../api/user';
@@ -10,8 +11,15 @@ import { SkeletonCard } from '../../../components/ui/cards/SkeletonCard';
 
 export function ProfilePage() {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
   const logoutMutation = useLogoutMutation();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate({ to: '/login' });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogout = async () => {
     await logoutMutation.mutateAsync();
@@ -61,7 +69,7 @@ export function ProfilePage() {
           
           <div className="flex-1 text-center md:text-left space-y-2">
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">
-              {user?.nombre || 'Usuario Registrado'} {user?.apellido || ''}
+              {user?.nombre || user?.name || ''} {user?.apellido || ''}
             </h1>
             <div className="flex flex-col sm:flex-row items-center gap-4 py-2 opacity-80">
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">

@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card';
-import { Users, Boxes, TrendingUp, AlertCircle } from 'lucide-react';
+import { Users, Boxes, TrendingUp } from 'lucide-react';
 
 // Tu-Turismo color palette
 const COLORS = {
@@ -68,20 +68,13 @@ export function DashboardStats({ data, isLoading }) {
         color: 'bg-violet-100 dark:bg-violet-900/30',
         textColor: 'text-violet-600 dark:text-violet-400',
       },
-       {
-         title: 'Tasa de Crecimiento',
-         value: `${data?.growthRate || 0}%`,
-         icon: TrendingUp,
-         color: 'bg-emerald-100 dark:bg-emerald-900/30',
-         textColor: 'text-emerald-600 dark:text-emerald-400',
-       },
-       {
-         title: 'Alertas Pendientes',
-         value: data?.pendingAlerts || 0,
-         icon: AlertCircle,
-         color: 'bg-amber-100 dark:bg-amber-900/30',
-         textColor: 'text-amber-600 dark:text-amber-400',
-       },
+      {
+        title: 'Tasa de Crecimiento',
+        value: `${data?.growthRate || 0}%`,
+        icon: TrendingUp,
+        color: 'bg-emerald-100 dark:bg-emerald-900/30',
+        textColor: 'text-emerald-600 dark:text-emerald-400',
+      },
     ],
     [data],
   );
@@ -89,7 +82,7 @@ export function DashboardStats({ data, isLoading }) {
   if (isLoading) {
     return (
       <div className="grid gap-6">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="h-24 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-800" />
         ))}
       </div>
@@ -100,7 +93,7 @@ export function DashboardStats({ data, isLoading }) {
     <div className="space-y-8">
       <div>
         <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Métricas Clave</h2>
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 md:grid-cols-3">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
