@@ -26,7 +26,7 @@ export function Header() {
           <img
             src={tutuLogo}
             alt="Tu-Turismo Logo"
-            className="h-48 w-48 md:h-[192px] md:w-[192px] object-contain flex-shrink-0"
+            className="h-32 w-32 object-contain flex-shrink-0 drop-shadow-md"
           />
         </Link>
 
