@@ -44,15 +44,13 @@ export const RestaurantesSection = () => {
                 key={restaurante._id || restaurante.id}
                 id={restaurante._id || restaurante.id}
                 title={restaurante.nombre}
-                image={restaurante.imagenes?.[0]}
-                category={restaurante.categoria?.nombre || 'Restaurante'}
+                image={restaurante.imagen_url}
+                category={restaurante.categoria || 'Restaurante'}
                 rating={restaurante.rating_promedio ?? null}
                 location={restaurante.direccion}
                 description={restaurante.descripcion}
                 extra={restaurante.horario}
-                coords={restaurante.ubicacion?.coordinates
-                  ? { lat: restaurante.ubicacion.coordinates[1], lng: restaurante.ubicacion.coordinates[0] }
-                  : null}
+                coords={restaurante.coordenadas}
               />
             ))
           )}

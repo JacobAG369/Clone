@@ -44,14 +44,12 @@ export const DestacadosSection = () => {
                 key={lugar._id || lugar.id}
                 id={lugar._id || lugar.id}
                 title={lugar.nombre}
-                image={lugar.imagenes?.[0]}
-                category={lugar.categoria?.nombre || 'Destacado'}
+                image={lugar.imagen_url}
+                category={lugar.categoria || 'Destacado'}
                 rating={lugar.rating_promedio ?? null}
                 location={lugar.direccion}
                 description={lugar.descripcion}
-                coords={lugar.ubicacion?.coordinates
-                  ? { lat: lugar.ubicacion.coordinates[1], lng: lugar.ubicacion.coordinates[0] }
-                  : null}
+                coords={lugar.coordenadas}
               />
             ))
           )}

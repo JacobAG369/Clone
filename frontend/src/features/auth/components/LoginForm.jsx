@@ -39,7 +39,7 @@ export function LoginForm({ onSuccess }) {
         {loginMutation.isError && (
           <div className="flex items-center gap-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-4 text-red-600 dark:text-red-400">
             <AlertCircle size={20} className="shrink-0" />
-            <p className="text-sm">{loginMutation.error?.response?.data?.message || 'No se pudo iniciar sesión.'}</p>
+            <p className="text-sm">{loginMutation.error?.response?.data?.detail || loginMutation.error?.response?.data?.error || 'No se pudo iniciar sesión.'}</p>
           </div>
         )}
 

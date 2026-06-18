@@ -44,17 +44,13 @@ export const EventosSection = () => {
                 key={evento._id || evento.id}
                 id={evento._id || evento.id}
                 title={evento.nombre}
-                image={evento.imagenes?.[0]}
+                image={evento.imagen_url}
                 date={evento.fecha_inicio
                   ? new Date(evento.fecha_inicio).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
-                  : evento.fecha
-                  ? new Date(evento.fecha).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })
                   : 'Próximamente'}
-                location={evento.lugar_nombre || evento.direccion}
-                category={evento.estado || 'Evento'}
-                coords={evento.ubicacion?.coordinates
-                  ? { lat: evento.ubicacion.coordinates[1], lng: evento.ubicacion.coordinates[0] }
-                  : null}
+                location={evento.municipio || evento.direccion}
+                category={evento.categoria || 'Evento'}
+                coords={evento.coordenadas}
               />
             ))
           )}

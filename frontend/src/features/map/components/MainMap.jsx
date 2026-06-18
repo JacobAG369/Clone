@@ -24,8 +24,8 @@ function MapUpdater({ markers, selectedCategory }) {
   useEffect(() => {
     if (markers && markers.length > 0) {
       const bounds = L.latLngBounds(markers.map(m => [
-        m.ubicacion?.coordinates[1] || 0, // lat
-        m.ubicacion?.coordinates[0] || 0 // lng
+        m.coordenadas?.lat || 0, // lat
+        m.coordenadas?.lng || 0 // lng
       ]));
       if (bounds.isValid()) {
         map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
@@ -43,11 +43,11 @@ function MarkersLayer({ markers, favoriteIds, onMarkerClick }) {
     const layerGroup = L.layerGroup().addTo(map);
 
     markers.forEach((marker) => {
-      if (!marker.ubicacion || !Array.isArray(marker.ubicacion.coordinates)) {
+      if (!marker.coordenadas || typeof marker.coordenadas.lat === 'undefined') {
         return;
       }
 
-      const [lng, lat] = marker.ubicacion.coordinates;
+      const { lat, lng } = marker.coordenadas;
       const IconComponent = getCategoryIcon(marker.tipo_recurso || marker.tipo);
       const isFavorite = favoriteIds.includes(marker.id);
 
