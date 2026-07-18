@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { getCategorias } from '../../api/home';
 import { CategoryCard } from '../../components/ui/cards/CategoryCard';
 import { CategorySkeleton } from '../../components/ui/cards/CategorySkeleton';
+import { useMapStore } from '../../store/useMapStore';
 
 // Map database category names to Lucide icons and colors
 const CATEGORY_MAP = {
@@ -14,10 +16,25 @@ const CATEGORY_MAP = {
 };
 
 export function CategoryGrid() {
+  const navigate = useNavigate();
+  const setActiveCategory = useMapStore((state) => state.setActiveCategory);
+
   const { data: categorias, isLoading, isError } = useQuery({
     queryKey: ['categorias'],
     queryFn: getCategorias
   });
+
+  const handleCategoryClick = (catName) => {
+    const norm = (catName || '').toLowerCase();
+    if (norm.includes('restaurante') || norm.includes('comida')) {
+      setActiveCategory('restaurantes');
+    } else if (norm.includes('evento') || norm.includes('festival')) {
+      setActiveCategory('eventos');
+    } else {
+      setActiveCategory('lugares');
+    }
+    navigate({ to: '/map' });
+  };
 
   return (
     <section className="py-16 bg-slate-50">
@@ -48,6 +65,7 @@ export function CategoryGrid() {
                   iconName={mapping.iconName}
                   colorClass={mapping.colorClass}
                   bgClass={mapping.bgClass}
+                  onClick={() => handleCategoryClick(cat.nombre)}
                 />
               );
             })

@@ -67,21 +67,21 @@ function getDefaultValues(resourceType, initialData) {
   return {
     nombre: initialData?.nombre || '',
     descripcion: initialData?.descripcion || '',
-    categoria_id: initialData?.categoria_id || '',
+    categoria_id: initialData?.categoria_id || (initialData?.categoria && typeof initialData.categoria === 'string' && initialData.categoria.length === 24 ? initialData.categoria : '') || '',
     direccion: initialData?.direccion || '',
     telefono: initialData?.telefono || '',
     horario: initialData?.horario || '',
     web: initialData?.web || '',
     fecha: fechaValue,
-    latitud: coordinates[1] ?? '',
-    longitud: coordinates[0] ?? '',
-    rating: initialData?.rating ?? initialData?.rating_promedio ?? 5,
+    latitud: coordinates[1] ?? (initialData?.coordenadas?.lat ?? ''),
+    longitud: coordinates[0] ?? (initialData?.coordenadas?.lng ?? ''),
+    rating: initialData?.rating ?? initialData?.rating_promedio ?? initialData?.calificacion ?? 5,
     imagen: null,
     resourceType,
   };
 }
 
-export function ResourceFormDialog({ open, onOpenChange, resourceType, categories, initialData, onSubmit, isPending, formErrors = {} }) {
+export function ResourceFormDialog({ open, onOpenChange, resourceType, categories = [], initialData, onSubmit, isPending, formErrors = {} }) {
   const schema = useMemo(() => schemas[resourceType], [resourceType]);
   const { validateAndSetFile, previewUrl, clearPreview } = useImageUpload();
 
@@ -91,10 +91,17 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
   });
 
   useEffect(() => {
-    form.reset(getDefaultValues(resourceType, initialData));
+    const defaults = getDefaultValues(resourceType, initialData);
+    if (resourceType === 'lugares' && !defaults.categoria_id && initialData?.categoria && Array.isArray(categories)) {
+      const match = categories.find(c => c.nombre?.toLowerCase() === initialData.categoria?.toLowerCase() || c.id === initialData.categoria || c._id === initialData.categoria);
+      if (match) {
+        defaults.categoria_id = match.id || match._id;
+      }
+    }
+    form.reset(defaults);
     clearPreview();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData, resourceType]);
+  }, [initialData, resourceType, categories]);
 
   // Fallback al preview de datos iniciales si no hay archivo nuevo
   const displayUrl = previewUrl || (initialData?.imagenes?.[0] || initialData?.imagen || null)?.replace(/[[\]"]/g, '');
@@ -111,7 +118,17 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
         if (value instanceof File) {
           payload.append('imagen', value);
         }
+        return;
+      }
 
+      if (key === 'categoria_id') {
+        payload.append('categoria_id', value);
+        const selectedCat = (Array.isArray(categories) ? categories : []).find(c => (c.id || c._id) === value);
+        if (selectedCat && selectedCat.nombre) {
+          payload.append('categoria', selectedCat.nombre);
+        } else if (initialData?.categoria) {
+          payload.append('categoria', initialData.categoria);
+        }
         return;
       }
 

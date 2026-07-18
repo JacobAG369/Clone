@@ -23,12 +23,16 @@ function MapUpdater({ markers, selectedCategory }) {
   
   useEffect(() => {
     if (markers && markers.length > 0) {
-      const bounds = L.latLngBounds(markers.map(m => [
-        m.coordenadas?.lat || 0, // lat
-        m.coordenadas?.lng || 0 // lng
-      ]));
-      if (bounds.isValid()) {
-        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 15 });
+      const validCoords = markers
+        .filter(m => m.coordenadas && typeof m.coordenadas.lat === 'number' && typeof m.coordenadas.lng === 'number' && !(m.coordenadas.lat === 0 && m.coordenadas.lng === 0))
+        .map(m => [m.coordenadas.lat, m.coordenadas.lng]);
+
+      if (validCoords.length > 0) {
+        const bounds = L.latLngBounds(validCoords);
+        if (bounds.isValid()) {
+          // Ajustar padding y usar un zoom más cercano y natural para el usuario
+          map.fitBounds(bounds, { padding: [80, 80], maxZoom: validCoords.length === 1 ? 16 : 15 });
+        }
       }
     }
   }, [markers, map, selectedCategory]);
@@ -36,28 +40,48 @@ function MapUpdater({ markers, selectedCategory }) {
   return null;
 }
 
-function MarkersLayer({ markers, favoriteIds, onMarkerClick }) {
+function SelectedMarkerFlyTo({ selectedMarker }) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (selectedMarker?.coordenadas && typeof selectedMarker.coordenadas.lat === 'number' && typeof selectedMarker.coordenadas.lng === 'number' && !(selectedMarker.coordenadas.lat === 0 && selectedMarker.coordenadas.lng === 0)) {
+      map.flyTo([selectedMarker.coordenadas.lat, selectedMarker.coordenadas.lng], 16, {
+        animate: true,
+        duration: 1.2,
+      });
+    }
+  }, [selectedMarker, map]);
+
+  return null;
+}
+
+function MarkersLayer({ markers, favoriteIds, selectedMarkerId, onMarkerClick }) {
   const map = useMap();
 
   useEffect(() => {
     const layerGroup = L.layerGroup().addTo(map);
 
     markers.forEach((marker) => {
-      if (!marker.coordenadas || typeof marker.coordenadas.lat === 'undefined') {
+      if (!marker.coordenadas || typeof marker.coordenadas.lat === 'undefined' || (marker.coordenadas.lat === 0 && marker.coordenadas.lng === 0)) {
         return;
       }
 
       const { lat, lng } = marker.coordenadas;
       const IconComponent = getCategoryIcon(marker.tipo_recurso || marker.tipo);
       const isFavorite = favoriteIds.includes(marker.id);
+      const isSelected = selectedMarkerId === marker.id;
 
-      const iconHtml = `<div class="relative w-10 h-10 rounded-full bg-brand-500 text-white flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900 shadow-brand-500/40 transition-transform hover:scale-110">${renderToString(<IconComponent size={20} />)}${isFavorite ? `<span class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-lg">${renderToString(<Heart size={12} fill="currentColor" />)}</span>` : ''}</div>`;
+      const baseClasses = isSelected
+        ? 'w-12 h-12 bg-emerald-500 scale-125 ring-4 ring-white dark:ring-slate-900 shadow-emerald-500/60 z-50'
+        : 'w-11 h-11 bg-brand-500 shadow-brand-500/50 hover:scale-110';
+
+      const iconHtml = `<div class="relative rounded-full text-white flex items-center justify-center shadow-xl border-[3px] border-white dark:border-slate-800 transition-all duration-300 cursor-pointer ${baseClasses}">${renderToString(<IconComponent size={isSelected ? 24 : 22} />)}${isFavorite ? `<span class="absolute -top-1.5 -right-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white shadow-md border border-white dark:border-slate-800">${renderToString(<Heart size={11} fill="currentColor" />)}</span>` : ''}</div>`;
 
       const divIcon = L.divIcon({
         html: iconHtml,
         className: 'custom-leaflet-icon-container bg-transparent border-none',
-        iconSize: [40, 40],
-        iconAnchor: [20, 40],
+        iconSize: [44, 44],
+        iconAnchor: [22, 44],
       });
 
       const leafletMarker = L.marker([lat, lng], { icon: divIcon });
@@ -69,7 +93,7 @@ function MarkersLayer({ markers, favoriteIds, onMarkerClick }) {
       layerGroup.clearLayers();
       map.removeLayer(layerGroup);
     };
-  }, [favoriteIds, map, markers, onMarkerClick]);
+  }, [favoriteIds, map, markers, selectedMarkerId, onMarkerClick]);
 
   return null;
 }
@@ -100,7 +124,7 @@ export default function MainMap() {
   const defaultCenter = [19.4326, -99.1332];
 
   return (
-    <div className="relative w-full h-full flex-1 min-h-[600px] z-0 bg-slate-100 dark:bg-slate-900">
+    <div className="relative w-full h-full flex-1 min-h-[600px] z-0 bg-slate-100 dark:bg-slate-900 transition-colors duration-300">
       
       {isLoading && (
         <div className="absolute inset-0 z-[500] flex items-center justify-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm">
@@ -126,9 +150,15 @@ export default function MainMap() {
           url={theme === 'dark' ? DarkTiles : LightTiles}
         />
 
-        <MarkersLayer markers={markers} favoriteIds={favoriteIds} onMarkerClick={setSelectedMarkerId} />
+        <MarkersLayer
+          markers={markers}
+          favoriteIds={favoriteIds}
+          selectedMarkerId={selectedMarkerId}
+          onMarkerClick={setSelectedMarkerId}
+        />
 
         <MapUpdater markers={markers} selectedCategory={activeCategory} />
+        <SelectedMarkerFlyTo selectedMarker={selectedMarker} />
       </MapContainer>
 
       {/* Floating UI */}

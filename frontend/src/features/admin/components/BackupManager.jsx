@@ -46,7 +46,7 @@ export function BackupManager() {
 
       // Crear un enlace temporal y disparar descarga
       const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-      const filename = `backup_${type}_${timestamp}.zip`;
+      const filename = `backup_${type}_${timestamp}.json`;
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -87,8 +87,10 @@ export function BackupManager() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = backup.id; 
+      a.download = `backup_${backup.id}.json`;
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
     } catch (_error) {
       toast({

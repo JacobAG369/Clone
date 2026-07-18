@@ -56,6 +56,34 @@ const login = async (credentials) => {
 };
 
 // ---------------------------------------------------------------------------
+// register
+// ---------------------------------------------------------------------------
+
+/**
+ * Registra un nuevo usuario en el sistema.
+ *
+ * @param {{ email: string, password: string, nombre: string, rol?: string }} userData
+ *   Datos del nuevo usuario.
+ *
+ * @returns {Promise<{
+ *   access_token:  string,
+ *   refresh_token: string,
+ *   token_type:    'Bearer',
+ *   expires_in:    number,
+ *   user: {
+ *     id:     string,
+ *     email:  string,
+ *     rol:    'turista' | 'admin',
+ *     nombre: string
+ *   }
+ * }>}
+ */
+const register = async (userData) => {
+  const response = await api.post('/core/auth/register/', userData);
+  return response.data;
+};
+
+// ---------------------------------------------------------------------------
 // refreshToken
 // ---------------------------------------------------------------------------
 
@@ -114,4 +142,4 @@ const getMe = async () => {
 // Exportación agrupada
 // ---------------------------------------------------------------------------
 
-export const authApi = { login, refreshToken, getMe };
+export const authApi = { login, register, refreshToken, getMe };

@@ -9,43 +9,57 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '../../../components/ui/input';
 import { Select } from '../../../components/ui/select';
 
-const userSchema = z.object({
+const createUserSchema = z.object({
   nombre: z.string().trim().min(1, 'El nombre es obligatorio.'),
-  apellido: z.string().trim().min(1, 'El apellido es obligatorio.'),
+  apellido: z.string().trim().optional().or(z.literal('')),
   email: z.string().trim().min(1, 'El email es obligatorio.').email('Ingresa un email valido.'),
   telefono: z.string().trim().optional().or(z.literal('')),
   rol: z.enum(['admin', 'turista'], { message: 'Selecciona un rol valido.' }),
   password: z.string().min(8, 'La contrasena debe tener al menos 8 caracteres.'),
 });
 
-const defaultValues = {
-  nombre: '',
-  apellido: '',
-  email: '',
-  telefono: '',
-  rol: 'turista',
-  password: '',
-};
+const editUserSchema = z.object({
+  nombre: z.string().trim().min(1, 'El nombre es obligatorio.'),
+  apellido: z.string().trim().optional().or(z.literal('')),
+  email: z.string().trim().min(1, 'El email es obligatorio.').email('Ingresa un email valido.'),
+  telefono: z.string().trim().optional().or(z.literal('')),
+  rol: z.enum(['admin', 'turista'], { message: 'Selecciona un rol valido.' }),
+  password: z.string().optional().or(z.literal('')),
+});
 
-export function UserFormDialog({ open, onOpenChange, onSubmit, isPending }) {
+const getDefaultValues = (initialData) => ({
+  nombre: initialData?.nombre || '',
+  apellido: initialData?.apellido || '',
+  email: initialData?.email || '',
+  telefono: initialData?.telefono || '',
+  rol: initialData?.rol || 'turista',
+  password: '',
+});
+
+export function UserFormDialog({ open, onOpenChange, onSubmit, isPending, initialData }) {
+  const isEditing = Boolean(initialData);
+  const schema = isEditing ? editUserSchema : createUserSchema;
+
   const form = useForm({
-    resolver: zodResolver(userSchema),
-    defaultValues,
+    resolver: zodResolver(schema),
+    defaultValues: getDefaultValues(initialData),
   });
 
   useEffect(() => {
     if (open) {
-      form.reset(defaultValues);
+      form.reset(getDefaultValues(initialData));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, initialData]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-full overflow-hidden sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Nuevo usuario</DialogTitle>
-          <DialogDescription>Crea una cuenta y asigna su rol dentro de la plataforma.</DialogDescription>
+          <DialogTitle>{isEditing ? 'Editar usuario' : 'Nuevo usuario'}</DialogTitle>
+          <DialogDescription>
+            {isEditing ? 'Modifica los datos y rol del usuario. Deja la contraseña en blanco si no deseas cambiarla.' : 'Crea una cuenta y asigna su rol dentro de la plataforma.'}
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -145,7 +159,7 @@ export function UserFormDialog({ open, onOpenChange, onSubmit, isPending }) {
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? <LoaderCircle size={16} className="mr-2 animate-spin" /> : <UserPlus size={16} className="mr-2" />}
-                Crear usuario
+                {isEditing ? 'Guardar cambios' : 'Crear usuario'}
               </Button>
             </div>
           </form>

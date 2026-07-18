@@ -31,7 +31,11 @@ export function HomeHero() {
           Explora los mejores lugares turísticos, eventos culturales y sabores tradicionales de Guadalajara.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/map" className="px-8 py-3 rounded-full font-semibold bg-cyan-500 text-white hover:bg-cyan-400 transition-colors shadow-lg hover:shadow-cyan-400/50 w-full sm:w-auto text-center inline-block">
+          <Link 
+            to="/map" 
+            onClick={() => setActiveCategory('lugares')} 
+            className="px-8 py-3 rounded-full font-semibold bg-cyan-500 text-white hover:bg-cyan-400 transition-colors shadow-lg hover:shadow-cyan-400/50 w-full sm:w-auto text-center inline-block"
+          >
             Explorar lugares
           </Link>
           <button 

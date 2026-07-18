@@ -27,10 +27,10 @@ export default function FloatingFilters() {
               aria-labelledby={labelId}
               onClick={() => setActiveCategory(category.id)}
               className={[
-                'flex items-center justify-center rounded-full border border-white/20 p-3 shadow-lg backdrop-blur-md transition-all duration-300',
+                'flex items-center justify-center rounded-full border p-3 shadow-xl backdrop-blur-md transition-all duration-300 transform-gpu',
                 isActive
-                  ? 'bg-primary text-white scale-110 shadow-brand-500/50'
-                  : 'bg-white/80 text-slate-600 shadow-black/10 hover:scale-105 hover:bg-white dark:bg-slate-800/80 dark:text-slate-300 dark:hover:bg-slate-700',
+                  ? 'bg-brand-500 text-white scale-110 shadow-brand-500/50 border-brand-400'
+                  : 'bg-white/90 text-slate-700 shadow-black/10 border-slate-200/60 hover:scale-110 hover:bg-white dark:bg-slate-900/90 dark:text-slate-200 dark:border-slate-700 dark:hover:bg-slate-800 dark:shadow-black/40',
               ].join(' ')}
             >
               <Icon size={24} className={isActive ? 'text-white' : 'text-brand-500 dark:text-brand-400'} />
@@ -38,10 +38,10 @@ export default function FloatingFilters() {
 
             <span
               id={labelId}
-              className="absolute left-full ml-4 whitespace-nowrap rounded bg-slate-800 px-2.5 py-1 text-xs font-medium text-white opacity-0 shadow-xl transition-opacity pointer-events-none group-hover:opacity-100 dark:bg-slate-700"
+              className="absolute left-full ml-4 whitespace-nowrap rounded-lg bg-slate-900/95 px-3 py-1.5 text-xs font-semibold text-white opacity-0 shadow-2xl backdrop-blur-md transition-all duration-200 pointer-events-none group-hover:opacity-100 group-hover:translate-x-1 dark:bg-slate-800/95"
             >
               {category.label}
-              <span className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-slate-800 dark:bg-slate-700" />
+              <span className="absolute top-1/2 -left-1 h-2 w-2 -translate-y-1/2 rotate-45 bg-slate-900/95 dark:bg-slate-800/95" />
             </span>
           </div>
         );

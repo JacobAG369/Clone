@@ -5,7 +5,7 @@ export const notificationsApi = {
    * Get all notifications for authenticated user
    */
   getNotifications: async () => {
-    const response = await api.get('/notificaciones');
+    const response = await api.get('/core/notifications/');
     return response.data.data || [];
   },
 
@@ -13,7 +13,7 @@ export const notificationsApi = {
    * Mark notification as read
    */
   markAsRead: async (notificationId) => {
-    const response = await api.patch(`/notificaciones/${notificationId}/read`);
+    const response = await api.patch(`/core/notifications/${notificationId}/read/`);
     return response.data.data;
   },
 
@@ -21,7 +21,7 @@ export const notificationsApi = {
    * Mark all notifications as read
    */
   markAllAsRead: async () => {
-    const response = await api.patch('/notificaciones/read-all');
+    const response = await api.patch('/core/notifications/read-all/');
     return response.data.data;
   },
 
@@ -29,7 +29,7 @@ export const notificationsApi = {
    * Delete a notification
    */
   deleteNotification: async (notificationId) => {
-    const response = await api.delete(`/notificaciones/${notificationId}`);
+    const response = await api.delete(`/core/notifications/${notificationId}/`);
     return response.data.data;
   },
 
@@ -37,7 +37,7 @@ export const notificationsApi = {
    * Delete all notifications
    */
   deleteAllNotifications: async () => {
-    const response = await api.delete('/notificaciones');
+    const response = await api.delete('/core/notifications/');
     return response.data.data;
   },
 };

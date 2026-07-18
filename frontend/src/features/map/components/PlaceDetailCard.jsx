@@ -22,8 +22,8 @@ export default function PlaceDetailCard({ marker, onClose }) {
   };
 
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 w-[calc(100%-2rem)] md:w-[600px] lg:w-[700px] z-[400] transition-transform duration-300 pointer-events-auto transform-gpu max-h-[80vh] overflow-y-auto">
-      <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700/50 overflow-hidden flex flex-col h-full">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:left-auto md:right-6 md:translate-x-0 w-[calc(100%-2rem)] md:w-[600px] lg:w-[700px] z-[400] transition-all duration-300 pointer-events-auto transform-gpu max-h-[80vh] overflow-y-auto animate-in fade-in-0 slide-in-from-bottom-6">
+      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-700/60 overflow-hidden flex flex-col h-full">
         {/* Header Image */}
         <div className="relative h-72 bg-slate-200 dark:bg-slate-800 shrink-0 w-full">
           {marker.imagen_url ? (

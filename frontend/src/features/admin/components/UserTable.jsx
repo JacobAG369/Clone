@@ -79,13 +79,18 @@ export function UserTable() {
   };
 
   const handleSubmit = (values) => {
+    const payload = { ...values };
+    if (!payload.password) {
+      delete payload.password;
+    }
+
     if (editingUser) {
       updateUserMutation.mutate({ 
         userId: editingUser.id || editingUser._id, 
-        payload: values 
+        payload
       });
     } else {
-      createUserMutation.mutate(values);
+      createUserMutation.mutate(payload);
     }
   };
 
