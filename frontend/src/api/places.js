@@ -210,6 +210,14 @@ const getRestaurantById = async (restaurantId) => {
 };
 
 // ---------------------------------------------------------------------------
+// TOP RATED — getTopRatedPlaces
+// ---------------------------------------------------------------------------
+export const getTopRatedPlaces = async (limit = 5) => {
+  const response = await api.get(`/core/places/top-rated/?limit=${limit}`);
+  return response.data.data || [];
+};
+
+// ---------------------------------------------------------------------------
 // Exportación agrupada
 // ---------------------------------------------------------------------------
 
@@ -219,7 +227,9 @@ export const placesApi = {
   getPlaceById,
   getCategorias,
   getMunicipios,
+  getTopRatedPlaces,
   // Restaurantes (misma lógica, colección diferente)
   getRestaurants,
   getRestaurantById,
 };
+

@@ -73,6 +73,12 @@ export const adminApi = {
     return response.data;
   },
 
+  // ── Geo-Analítica Territorial ────────────────────────────────────── //
+  getSpatialDensity: async () => {
+    const response = await api.get('/core/admin/spatial-density/');
+    return response.data.data || [];
+  },
+
   // ── Estadísticas ──────────────────────────────────────────────────── //
   getStats: async () => {
     try {

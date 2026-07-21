@@ -27,3 +27,9 @@ export const getFavoriteRestaurants = async () => {
   return favoritesApi.getFavorites({ tipo: 'restaurante' });
 };
 
+export const sendAiRecommendations = async () => {
+  const response = await api.post('/core/users/send-recommendations/');
+  return response.data;
+};
+
+

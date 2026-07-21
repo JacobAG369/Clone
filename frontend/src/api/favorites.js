@@ -63,11 +63,20 @@ const getFavorites = async (options = {}) => {
  * @throws {import('axios').AxiosError} 401 → Token ausente o expirado.
  */
 const addFavorite = async (resource) => {
+  const resourceId = resource.id || resource.referencia_id || resource._id;
+  const rawTipo = resource.tipo || resource.tipo_recurso || resource._collectionType || resource.categoria_normalizada || 'lugar';
+  let normTipo = 'lugar';
+  if (typeof rawTipo === 'string') {
+    const t = rawTipo.toLowerCase();
+    if (t.includes('restauran') || t.includes('comida')) normTipo = 'restaurante';
+    else if (t.includes('event')) normTipo = 'evento';
+    else normTipo = 'lugar';
+  }
+
   const response = await api.post('/core/favorites/', {
-    tipo: resource.tipo || resource.tipo_recurso,
-    referencia_id: resource.id || resource.referencia_id,
+    tipo: normTipo,
+    referencia_id: resourceId,
   });
-  // En caso de duplicado el backend devuelve 200 con already_exists: true
   return response.data.data ?? null;
 };
 

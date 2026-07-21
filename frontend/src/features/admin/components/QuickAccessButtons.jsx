@@ -1,8 +1,8 @@
-import { Users, Package, Database } from 'lucide-react';
+import { Users, Package, Database, MapPin } from 'lucide-react';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 
-export function QuickAccessButtons({ onUsersCRUD, onResourcesCRUD, onBackup }) {
+export function QuickAccessButtons({ onUsersCRUD, onResourcesCRUD, onBackup, onGeoAnalitica }) {
   const actions = [
     {
       id: 'usuarios',
@@ -23,6 +23,15 @@ export function QuickAccessButtons({ onUsersCRUD, onResourcesCRUD, onBackup }) {
       onClick: onResourcesCRUD,
     },
     {
+      id: 'geoanalitica',
+      title: 'Geo-Analítica Territorial',
+      description: 'Mapa de calor y concentración por municipio',
+      icon: MapPin,
+      color: 'bg-indigo-100 dark:bg-indigo-900/30',
+      iconColor: 'text-indigo-600 dark:text-indigo-400',
+      onClick: onGeoAnalitica,
+    },
+    {
       id: 'backup',
       title: 'Copias de Seguridad',
       description: 'Realiza backups completos o selectivos',
@@ -34,7 +43,7 @@ export function QuickAccessButtons({ onUsersCRUD, onResourcesCRUD, onBackup }) {
   ];
 
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
       {actions.map((action) => {
         const Icon = action.icon;
         return (

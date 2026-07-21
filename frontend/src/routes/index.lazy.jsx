@@ -4,6 +4,7 @@ import { CategoryGrid as Categories } from '../features/home/CategoryGrid';
 import { DestacadosSection } from '../features/home/DestacadosSection';
 import { EventosSection } from '../features/home/EventosSection';
 import { RestaurantesSection } from '../features/home/RestaurantesSection';
+import { TopRatedBubble } from '../components/TopRatedBubble';
 
 export const Route = createLazyFileRoute('/')({
   component: () => (
@@ -15,7 +16,9 @@ export const Route = createLazyFileRoute('/')({
       <DestacadosSection />
       <EventosSection />
       <RestaurantesSection />
+      <TopRatedBubble />
     </div>
   )
 });
+
 
