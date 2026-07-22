@@ -20,13 +20,13 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
-      <div className="container mx-auto px-6 py-3 flex items-center justify-between">
+      <div className="container mx-auto px-6 py-2 flex items-center justify-between">
         {/* Logo Area */}
-        <Link to="/" className="flex items-center gap-4 hover:opacity-80 transition-opacity">
+        <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <img
             src={tutuLogo}
             alt="Tu-Turismo Logo"
-            className="h-32 w-32 object-contain flex-shrink-0 drop-shadow-md"
+            className="h-14 w-auto object-contain flex-shrink-0 drop-shadow-sm"
           />
         </Link>
 
