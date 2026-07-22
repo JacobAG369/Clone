@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import catedralImg from '../../assets/catedral.jpg';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { X, Map } from 'lucide-react';
@@ -15,8 +16,7 @@ const CATEGORY_MAP = {
     mapCategory: 'lugares',
     description:
       'Guadalajara guarda en sus calles monumentos que narran siglos de historia. Desde la imponente Catedral de Guadalajara hasta el Teatro Degollado y el Hospicio Cabañas, cada estructura es un testimonio vivo del patrimonio cultural jalisciense. Recorre los arcos, plazas y esculturas que hacen de esta ciudad un museo a cielo abierto.',
-    image:
-      'https://images.unsplash.com/photo-1568322445389-f64ac2515020?auto=format&fit=crop&q=80&w=1200',
+    image: catedralImg,
   },
   'Restaurantes': {
     iconName: 'Utensils',
