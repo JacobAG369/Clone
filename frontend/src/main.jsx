@@ -13,6 +13,7 @@ useThemeStore.getState().initializeTheme?.() || useThemeStore.setState({ theme: 
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
+import { ErrorBoundary } from './components/common/ErrorBoundary'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,9 +29,11 @@ const router = createRouter({ routeTree })
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster richColors position="top-right" />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster richColors position="top-right" />
+      </QueryClientProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )

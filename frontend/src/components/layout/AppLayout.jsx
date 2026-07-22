@@ -5,6 +5,7 @@ import { Header } from './Header';
 import { useFavorites } from '../../hooks/useFavorites';
 import { useThemeStore } from '../../store/useThemeStore';
 import { ToastViewport } from '../ui/toast';
+import { ErrorBoundary } from '../common/ErrorBoundary';
 
 export function AppLayout() {
   const theme = useThemeStore((state) => state.theme);
@@ -37,7 +38,9 @@ export function AppLayout() {
     <div className="min-h-screen flex flex-col pt-0 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       <Header />
       <main className="flex-1 flex flex-col">
-        <Outlet />
+        <ErrorBoundary>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       {!isMapRoute && <Footer />}
       <ToastViewport />

@@ -19,7 +19,7 @@ const getAuthStore = () => import('../store/useAuthStore').then((m) => m.useAuth
 // Instancia principal
 // ---------------------------------------------------------------------------
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000/api/v1',
+  baseURL: import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1',
   // ❌ withCredentials eliminado: no usamos cookies de sesión, solo cabeceras JWT.
   headers: {
     'Content-Type': 'application/json',
