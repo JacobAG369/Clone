@@ -1,18 +1,32 @@
 import { Link } from '@tanstack/react-router';
 import { Mail, MapPin, Phone } from 'lucide-react';
 import { useMapStore } from '../../store/useMapStore';
+import { useLottie } from 'lottie-react';
+import tutuLottie from '../../assets/tutu-lottie.json';
+import adapticodeLogo from '../../assets/adapti-code.png';
 
 export function Footer() {
   const setActiveCategory = useMapStore((state) => state.setActiveCategory);
+
+  const { View } = useLottie({
+    animationData: tutuLottie,
+    loop: false,
+    style: {
+      width: '160px',
+      height: '160px'
+    }
+  });
 
   return (
     <footer className="bg-slate-800 text-slate-300 py-12 border-t border-slate-700 mt-auto">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Logo / Desc */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">Tu-Turismo</h2>
-            <p className="text-sm text-slate-400 leading-relaxed">
+          <div className="flex flex-col items-center">
+            <div className="flex justify-center drop-shadow-sm -my-6">
+              {View}
+            </div>
+            <p className="text-sm text-slate-400 leading-relaxed text-center">
               Descubre los mejores lugares, eventos y restaurantes en la ciudad. Tu experiencia perfecta comienza aquí.
             </p>
           </div>
@@ -91,8 +105,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-slate-700 text-center text-sm text-slate-500">
+        <div className="mt-12 pt-8 border-t border-slate-700 flex flex-row items-center justify-center gap-3 text-sm text-slate-500">
           <p>&copy; {new Date().getFullYear()} AdaptiCode. Todos los derechos reservados.</p>
+          <img src={adapticodeLogo} alt="AdaptiCode Logo" className="h-6 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity" />
         </div>
       </div>
     </footer>

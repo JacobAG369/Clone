@@ -1,11 +1,21 @@
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useNavigate, Link } from '@tanstack/react-router';
 import { LoginForm } from '../components/LoginForm';
-import tutuLogo from '../../../assets/tutu-logo.png';
+import { useLottie } from 'lottie-react';
+import tutuLottie from '../../../assets/tutu-logo-lottie.json';
 
 export const LoginPage = () => {
   const { clearError } = useAuthStore();
   const navigate = useNavigate();
+
+  const { View } = useLottie({
+    animationData: tutuLottie,
+    loop: false,
+    style: {
+      width: '480px',
+      height: '480px'
+    }
+  });
 
   const handleSuccess = () => {
     clearError();
@@ -18,16 +28,10 @@ export const LoginPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Logo Section */}
           <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 dark:from-slate-900 dark:to-slate-950 p-8 min-h-[400px]">
-            <div className="text-center">
-              <img
-                src={tutuLogo}
-                alt="Tu-Turismo Logo"
-                className="w-48 h-48 object-contain mb-6 drop-shadow-lg"
-              />
-              <h1 className="text-3xl font-bold text-white mb-4">Tu-Turismo</h1>
-              <p className="text-slate-300 text-lg leading-relaxed max-w-sm">
-
-              </p>
+            <div className="text-center flex flex-col items-center">
+              <div className="mb-6 drop-shadow-lg">
+                {View}
+              </div>
             </div>
           </div>
 

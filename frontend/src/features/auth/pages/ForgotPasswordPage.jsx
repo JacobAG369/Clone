@@ -5,7 +5,8 @@ import { useRecoveryStore } from '../store/useRecoveryStore';
 import { RequestCodeForm } from '../components/recovery/RequestCodeForm';
 import { VerifyCodeForm } from '../components/recovery/VerifyCodeForm';
 import { ResetPasswordForm } from '../components/recovery/ResetPasswordForm';
-import tutuLogo from '../../../assets/tutu-logo.png';
+import { useLottie } from 'lottie-react';
+import tutuLottie from '../../../assets/tutu-logo-lottie.json';
 
 const STEPS = [
   { label: 'Correo', number: 1 },
@@ -23,19 +24,25 @@ export const ForgotPasswordPage = () => {
   const step = useRecoveryStore((s) => s.step);
   const { title, subtitle } = STEP_META[step];
 
+  const { View } = useLottie({
+    animationData: tutuLottie,
+    loop: false,
+    style: {
+      width: '480px',
+      height: '480px'
+    }
+  });
+
   return (
     <div className="flex-1 flex items-center justify-center p-4 my-8">
       <div className="w-full max-w-5xl bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
           {/* Panel izquierdo */}
           <div className="hidden lg:flex items-center justify-center bg-gradient-to-br from-slate-700 to-slate-900 dark:from-slate-900 dark:to-slate-950 p-8 min-h-[400px]">
-            <div className="text-center">
-              <img
-                src={tutuLogo}
-                alt="Tu-Turismo Logo"
-                className="w-48 h-48 object-contain mb-6 drop-shadow-lg"
-              />
-              <h1 className="text-3xl font-bold text-white mb-4">Tu-Turismo</h1>
+            <div className="text-center flex flex-col items-center">
+              <div className="mb-6 drop-shadow-lg">
+                {View}
+              </div>
 
 
               {/* Indicador de pasos */}
