@@ -5,6 +5,7 @@ import { DestacadosSection } from '../features/home/DestacadosSection';
 import { EventosSection } from '../features/home/EventosSection';
 import { RestaurantesSection } from '../features/home/RestaurantesSection';
 import { TopRatedBubble } from '../components/TopRatedBubble';
+import { YiyiAssistantBubble } from '../components/YiyiAssistantBubble';
 
 export const Route = createLazyFileRoute('/')({
   component: () => (
@@ -17,6 +18,7 @@ export const Route = createLazyFileRoute('/')({
       <EventosSection />
       <RestaurantesSection />
       <TopRatedBubble />
+      <YiyiAssistantBubble />
     </div>
   )
 });

@@ -13,73 +13,26 @@ import { createFileRoute } from '@tanstack/react-router'
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 
-const TerminosLazyRouteImport = createFileRoute('/terminos')()
-const RegisterLazyRouteImport = createFileRoute('/register')()
+const IndexLazyRouteImport = createFileRoute('/')()
+const AcercaLazyRouteImport = createFileRoute('/acerca')()
+const ConfigLazyRouteImport = createFileRoute('/config')()
+const FaqLazyRouteImport = createFileRoute('/faq')()
+const FavoritesLazyRouteImport = createFileRoute('/favorites')()
+const LoginLazyRouteImport = createFileRoute('/login')()
+const MapLazyRouteImport = createFileRoute('/map')()
+const PrivacidadLazyRouteImport = createFileRoute('/privacidad')()
+const ProfileLazyRouteImport = createFileRoute('/profile')()
 const RecuperarContrasenaLazyRouteImport = createFileRoute(
   '/recuperar-contrasena',
 )()
-const ProfileLazyRouteImport = createFileRoute('/profile')()
-const PrivacidadLazyRouteImport = createFileRoute('/privacidad')()
-const MapLazyRouteImport = createFileRoute('/map')()
-const LoginLazyRouteImport = createFileRoute('/login')()
-const FavoritesLazyRouteImport = createFileRoute('/favorites')()
-const FaqLazyRouteImport = createFileRoute('/faq')()
-const ConfigLazyRouteImport = createFileRoute('/config')()
-const AcercaLazyRouteImport = createFileRoute('/acerca')()
-const IndexLazyRouteImport = createFileRoute('/')()
+const RegisterLazyRouteImport = createFileRoute('/register')()
+const TerminosLazyRouteImport = createFileRoute('/terminos')()
 
-const TerminosLazyRoute = TerminosLazyRouteImport.update({
-  id: '/terminos',
-  path: '/terminos',
+const IndexLazyRoute = IndexLazyRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/terminos.lazy').then((d) => d.Route))
-const RegisterLazyRoute = RegisterLazyRouteImport.update({
-  id: '/register',
-  path: '/register',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
-const RecuperarContrasenaLazyRoute = RecuperarContrasenaLazyRouteImport.update({
-  id: '/recuperar-contrasena',
-  path: '/recuperar-contrasena',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() =>
-  import('./routes/recuperar-contrasena.lazy').then((d) => d.Route),
-)
-const ProfileLazyRoute = ProfileLazyRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
-const PrivacidadLazyRoute = PrivacidadLazyRouteImport.update({
-  id: '/privacidad',
-  path: '/privacidad',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/privacidad.lazy').then((d) => d.Route))
-const MapLazyRoute = MapLazyRouteImport.update({
-  id: '/map',
-  path: '/map',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/map.lazy').then((d) => d.Route))
-const LoginLazyRoute = LoginLazyRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
-const FavoritesLazyRoute = FavoritesLazyRouteImport.update({
-  id: '/favorites',
-  path: '/favorites',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/favorites.lazy').then((d) => d.Route))
-const FaqLazyRoute = FaqLazyRouteImport.update({
-  id: '/faq',
-  path: '/faq',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/faq.lazy').then((d) => d.Route))
-const ConfigLazyRoute = ConfigLazyRouteImport.update({
-  id: '/config',
-  path: '/config',
-  getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/config.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
 const AcercaLazyRoute = AcercaLazyRouteImport.update({
   id: '/acerca',
   path: '/acerca',
@@ -90,11 +43,58 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexLazyRoute = IndexLazyRouteImport.update({
-  id: '/',
-  path: '/',
+const ConfigLazyRoute = ConfigLazyRouteImport.update({
+  id: '/config',
+  path: '/config',
   getParentRoute: () => rootRouteImport,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any).lazy(() => import('./routes/config.lazy').then((d) => d.Route))
+const FaqLazyRoute = FaqLazyRouteImport.update({
+  id: '/faq',
+  path: '/faq',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/faq.lazy').then((d) => d.Route))
+const FavoritesLazyRoute = FavoritesLazyRouteImport.update({
+  id: '/favorites',
+  path: '/favorites',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/favorites.lazy').then((d) => d.Route))
+const LoginLazyRoute = LoginLazyRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/login.lazy').then((d) => d.Route))
+const MapLazyRoute = MapLazyRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/map.lazy').then((d) => d.Route))
+const PrivacidadLazyRoute = PrivacidadLazyRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/privacidad.lazy').then((d) => d.Route))
+const ProfileLazyRoute = ProfileLazyRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/profile.lazy').then((d) => d.Route))
+const RecuperarContrasenaLazyRoute = RecuperarContrasenaLazyRouteImport.update({
+  id: '/recuperar-contrasena',
+  path: '/recuperar-contrasena',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() =>
+  import('./routes/recuperar-contrasena.lazy').then((d) => d.Route),
+)
+const RegisterLazyRoute = RegisterLazyRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/register.lazy').then((d) => d.Route))
+const TerminosLazyRoute = TerminosLazyRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any).lazy(() => import('./routes/terminos.lazy').then((d) => d.Route))
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
@@ -208,74 +208,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terminos': {
-      id: '/terminos'
-      path: '/terminos'
-      fullPath: '/terminos'
-      preLoaderRoute: typeof TerminosLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/register': {
-      id: '/register'
-      path: '/register'
-      fullPath: '/register'
-      preLoaderRoute: typeof RegisterLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/recuperar-contrasena': {
-      id: '/recuperar-contrasena'
-      path: '/recuperar-contrasena'
-      fullPath: '/recuperar-contrasena'
-      preLoaderRoute: typeof RecuperarContrasenaLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidad': {
-      id: '/privacidad'
-      path: '/privacidad'
-      fullPath: '/privacidad'
-      preLoaderRoute: typeof PrivacidadLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/favorites': {
-      id: '/favorites'
-      path: '/favorites'
-      fullPath: '/favorites'
-      preLoaderRoute: typeof FavoritesLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/faq': {
-      id: '/faq'
-      path: '/faq'
-      fullPath: '/faq'
-      preLoaderRoute: typeof FaqLazyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/config': {
-      id: '/config'
-      path: '/config'
-      fullPath: '/config'
-      preLoaderRoute: typeof ConfigLazyRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/acerca': {
@@ -292,11 +229,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexLazyRouteImport
+    '/config': {
+      id: '/config'
+      path: '/config'
+      fullPath: '/config'
+      preLoaderRoute: typeof ConfigLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/faq': {
+      id: '/faq'
+      path: '/faq'
+      fullPath: '/faq'
+      preLoaderRoute: typeof FaqLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favorites': {
+      id: '/favorites'
+      path: '/favorites'
+      fullPath: '/favorites'
+      preLoaderRoute: typeof FavoritesLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/recuperar-contrasena': {
+      id: '/recuperar-contrasena'
+      path: '/recuperar-contrasena'
+      fullPath: '/recuperar-contrasena'
+      preLoaderRoute: typeof RecuperarContrasenaLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterLazyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
