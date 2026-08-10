@@ -58,23 +58,23 @@ export function AdminDashboardPage() {
     },
     onError: (error) => {
       const { fieldErrors, message } = parseImageUploadError(error);
-      
+
       // Si hay errores de validación (422), mostrarlos en el formulario
       if (error?.response?.status === 422 && fieldErrors) {
         setFormErrors(fieldErrors);
         // Mostrar solo el primer error en toast
         const firstError = Object.values(fieldErrors)[0]?.[0] || message;
-        toast({ 
-          title: 'Validación fallida', 
+        toast({
+          title: 'Validación fallida',
           description: firstError,
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       } else {
         // Error genérico
-        toast({ 
-          title: 'No se pudo crear', 
+        toast({
+          title: 'No se pudo crear',
           description: message || 'Ocurrio un error al guardar.',
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       }
     },
@@ -92,21 +92,21 @@ export function AdminDashboardPage() {
     },
     onError: (error) => {
       const { fieldErrors, message } = parseImageUploadError(error);
-      
+
       // Si hay errores de validación (422), mostrarlos en el formulario
       if (error?.response?.status === 422 && fieldErrors) {
         setFormErrors(fieldErrors);
         const firstError = Object.values(fieldErrors)[0]?.[0] || message;
-        toast({ 
-          title: 'Validación fallida', 
+        toast({
+          title: 'Validación fallida',
           description: firstError,
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       } else {
-        toast({ 
-          title: 'No se pudo actualizar', 
+        toast({
+          title: 'No se pudo actualizar',
           description: message || 'Ocurrio un error al actualizar.',
-          variant: 'destructive' 
+          variant: 'destructive'
         });
       }
     },
@@ -165,7 +165,7 @@ export function AdminDashboardPage() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-500 flex items-center gap-1.5">
-                <span>⚡ Tu-Turismo Suite</span>
+                <span>Tu-Turismo Suite</span>
               </p>
               <h1 className="mt-1 text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Panel de Control & Gestión

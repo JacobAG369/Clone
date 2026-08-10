@@ -12,15 +12,18 @@ export const TopRatedBubble = () => {
   const { user } = useAuthStore();
   const setMapCenter = useMapStore((s) => s.setMapCenter);
 
-  // Solo visible para usuario turista o público en general desde el home
-  if (user && (user.rol === 'admin' || user.rol === 'proveedor')) {
-    return null;
-  }
-
+  // ⚠️ IMPORTANTE: todos los hooks DEBEN llamarse antes de cualquier return condicional
+  // (Rules of Hooks). El filtro de rol va DESPUÉS de los hooks.
   const { data: topPlaces = [], isLoading } = useQuery({
     queryKey: ['places', 'top-rated'],
     queryFn: () => getTopRatedPlaces(5),
+    staleTime: 5 * 60 * 1000, // 5 min cache
   });
+
+  // Solo visible para usuarios turistas o visitantes no autenticados
+  if (user && (user.rol === 'admin' || user.rol === 'proveedor')) {
+    return null;
+  }
 
   const handleExplore = (place) => {
     const lat = place.latitud || place.coordenadas?.lat;

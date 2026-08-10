@@ -6,6 +6,7 @@ import { useFavorites } from '../../hooks/useFavorites';
 import { useThemeStore } from '../../store/useThemeStore';
 import { ToastViewport } from '../ui/toast';
 import { ErrorBoundary } from '../common/ErrorBoundary';
+import { TopRatedBubble } from '../TopRatedBubble';
 
 export function AppLayout() {
   const theme = useThemeStore((state) => state.theme);
@@ -43,6 +44,8 @@ export function AppLayout() {
         </ErrorBoundary>
       </main>
       {!isMapRoute && <Footer />}
+      {/* Burbuja flotante global — visible en todas las páginas excepto el mapa */}
+      {!isMapRoute && <TopRatedBubble />}
       <ToastViewport />
     </div>
   );

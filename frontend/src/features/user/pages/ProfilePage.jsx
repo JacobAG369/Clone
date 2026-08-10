@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { 
-  Settings, LogOut, MapPin, Mail, Phone, Calendar, Star, Sparkles, 
+import {
+  Settings, LogOut, MapPin, Mail, Phone, Calendar, Star, Sparkles,
   Send, CheckCircle2, AlertCircle, Loader2, Compass, ShieldCheck, Heart, Award
 } from 'lucide-react';
 import { Link, useNavigate } from '@tanstack/react-router';
@@ -39,6 +39,15 @@ export function ProfilePage() {
 
   const aiMutation = useMutation({
     mutationFn: sendAiRecommendations,
+    onError: (error) => {
+      // Log detallado para debugging
+      console.error('[AI Recommendations] Error:', {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+        isNetworkError: !error?.response,
+      });
+    },
   });
 
   return (
@@ -55,14 +64,14 @@ export function ProfilePage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link 
-              to="/config" 
+            <Link
+              to="/config"
               className="flex items-center justify-center w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white transition-all hover:scale-105 shadow-md"
               title="Configuración de la cuenta"
             >
               <Settings className="w-5 h-5" />
             </Link>
-            <button 
+            <button
               onClick={handleLogout}
               className="flex items-center justify-center gap-2 px-4 h-10 rounded-2xl bg-red-500/20 hover:bg-red-500/30 backdrop-blur-md border border-red-400/30 text-red-200 font-bold text-sm transition-all hover:scale-105 shadow-md"
             >
@@ -78,9 +87,9 @@ export function ProfilePage() {
         <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 shadow-2xl border border-slate-200/80 dark:border-slate-800/80 flex flex-col md:flex-row items-center gap-8">
           <div className="relative group">
             <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl ring-4 ring-cyan-500/50 bg-slate-200 flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
-              <img 
-                src={user?.avatar || `https://ui-avatars.com/api/?name=${(user?.nombre || user?.name || 'User')}&background=0D8ABC&color=fff&size=256`} 
-                alt="Avatar de Usuario" 
+              <img
+                src={user?.avatar || `https://ui-avatars.com/api/?name=${(user?.nombre || user?.name || 'User')}&background=0D8ABC&color=fff&size=256`}
+                alt="Avatar de Usuario"
                 className="w-full h-full object-cover"
               />
             </div>
@@ -88,14 +97,14 @@ export function ProfilePage() {
               <Award size={18} />
             </div>
           </div>
-          
+
           <div className="flex-1 text-center md:text-left space-y-3">
             <div className="flex flex-col md:flex-row md:items-center gap-3 justify-center md:justify-start">
               <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
                 {user ? (user.nombre || user.name || 'Turista') : 'Turista'} {user?.apellido || ''}
               </h1>
               <span className="inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-bold bg-cyan-100 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-300 border border-cyan-200 dark:border-cyan-800/60 self-center md:self-auto">
-                ✨ Turista Explorador
+
               </span>
             </div>
 
@@ -109,7 +118,7 @@ export function ProfilePage() {
                 <span className="font-medium">{user?.telefono || '+52 33 0000 0000'}</span>
               </div>
             </div>
-            
+
             <div className="pt-1 flex justify-center md:justify-start">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/80 text-slate-700 dark:text-slate-200 text-xs font-bold">
                 <MapPin className="w-4 h-4 text-cyan-500" />
@@ -160,7 +169,7 @@ export function ProfilePage() {
               ) : (
                 <>
                   <Send className="w-5 h-5 text-indigo-600" />
-                  <span>Recibir Recomendaciones IA</span>
+                  <span>Recibir Recomendaciones personalizadas</span>
                 </>
               )}
             </button>
@@ -172,7 +181,7 @@ export function ProfilePage() {
               <div className="flex items-center gap-3.5 bg-emerald-500/25 backdrop-blur-md border border-emerald-400/40 p-4.5 rounded-2xl text-emerald-100 mb-6 shadow-lg">
                 <CheckCircle2 className="w-6 h-6 text-emerald-300 shrink-0" />
                 <div>
-                  <p className="font-extrabold text-white text-base">¡Itinerario IA generado y enviado con éxito!</p>
+                  <p className="font-extrabold text-white text-base">¡Itinerario personalizado generado y enviado con éxito, revise su correo!</p>
                   <p className="text-xs sm:text-sm text-emerald-100/90 mt-0.5">
                     {aiMutation.data?.message || 'Revisa tu bandeja de correo o explora el adelanto predicho por nuestro algoritmo abajo.'}
                   </p>
@@ -186,13 +195,13 @@ export function ProfilePage() {
                       <Compass className="w-4 h-4 text-amber-300" />
                       <span>Adelanto del itinerario predicho para ti:</span>
                     </h4>
-                    <span className="text-xs bg-white/20 px-2.5 py-0.5 rounded-full font-bold">Top 3 predichos</span>
+                    <span className="text-xs bg-white/20 px-2.5 py-0.5 rounded-full font-bold">Top 3 recomendados para ti: </span>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {aiMutation.data.data.slice(0, 3).map((item) => (
-                      <div 
-                        key={item.id} 
+                      <div
+                        key={item.id}
                         className="bg-white/10 hover:bg-white/15 backdrop-blur-xl rounded-2xl p-5 border border-white/20 flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-xl"
                       >
                         <div>
@@ -227,7 +236,11 @@ export function ProfilePage() {
                 <div>
                   <p className="font-extrabold text-white text-base">No se pudo generar el itinerario en este momento</p>
                   <p className="text-xs sm:text-sm text-red-200 mt-0.5">
-                    {aiMutation.error?.response?.data?.error || aiMutation.error?.message || 'Verifica la conexión o intenta nuevamente tras explorar algunos lugares.'}
+                    {!aiMutation.error?.response
+                      ? '⚠️ Error de conexión: el servidor no está disponible. Verifica que el backend esté activo e intenta nuevamente.'
+                      : aiMutation.error?.response?.status === 401
+                      ? '🔒 Tu sesión ha expirado. Cierra sesión y vuelve a iniciar.'
+                      : aiMutation.error?.response?.data?.error || aiMutation.error?.response?.data?.detail || aiMutation.error?.message || 'Error interno del servidor. Intenta nuevamente en unos momentos.'}
                   </p>
                 </div>
               </div>
@@ -237,7 +250,7 @@ export function ProfilePage() {
 
         {/* Cuadrícula de Favoritos (Lugares y Eventos) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          
+
           {/* Sección: Lugares Favoritos */}
           <section className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-slate-200/80 dark:border-slate-800/80 shadow-xl">
             <div className="flex items-center justify-between mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
@@ -254,14 +267,14 @@ export function ProfilePage() {
                 {places?.length || 0} items
               </span>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               {isLoadingPlaces ? (
                 Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
               ) : places && places.length > 0 ? (
                 places.map((favorito) => (
                   <div key={favorito.referencia_id} className="transition-all duration-300 hover:scale-[1.01] hover:shadow-lg rounded-2xl overflow-hidden">
-                    <LugarCard 
+                    <LugarCard
                       title={favorito?.recurso?.nombre || 'Destino de Jalisco'}
                       image={favorito?.recurso?.imagen || null}
                       category={favorito?.recurso?.categoria || 'Lugar'}
@@ -297,14 +310,14 @@ export function ProfilePage() {
                 {events?.length || 0} items
               </span>
             </div>
-            
+
             <div className="flex flex-col gap-4">
               {isLoadingEvents ? (
                 Array.from({ length: 3 }).map((_, i) => <SkeletonCard key={i} />)
               ) : events && events.length > 0 ? (
                 events.map((favorito) => (
                   <div key={favorito.referencia_id} className="transition-all duration-300 hover:scale-[1.01] hover:shadow-lg rounded-2xl overflow-hidden">
-                    <EventoCard 
+                    <EventoCard
                       title={favorito?.recurso?.nombre || 'Evento en Jalisco'}
                       image={favorito?.recurso?.imagen || null}
                       date={favorito?.recurso?.fecha || new Date().toISOString().split('T')[0]}
