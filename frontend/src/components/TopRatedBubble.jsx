@@ -51,12 +51,12 @@ export const TopRatedBubble = () => {
             <div className="flex items-center gap-2 mb-1">
               <Trophy className="w-5 h-5 text-amber-200 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full">
-                Bayesian Score
+                Mejor Valorados
               </span>
             </div>
-            <h3 className="text-lg font-extrabold tracking-tight">Top 5 Joyas de Jalisco</h3>
+            <h3 className="text-lg font-extrabold tracking-tight">Top 5 Destinos de Jalisco</h3>
             <p className="text-xs text-amber-100 opacity-90 mt-1">
-              Seleccionados por puntuación bayesiana equilibrada y comunidad turística.
+              Los mejores destinos turísticos según la comunidad de Tu-Turismo.
             </p>
           </div>
 
@@ -120,7 +120,7 @@ export const TopRatedBubble = () => {
           {/* Footer modal */}
           <div className="bg-slate-50 dark:bg-slate-800/50 p-3 text-center border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] text-slate-400 font-medium">
-              💡 Puntuación bayesiana ponderada para turistas
+              Seleccionados por valoración de la comunidad turística
             </span>
           </div>
         </div>

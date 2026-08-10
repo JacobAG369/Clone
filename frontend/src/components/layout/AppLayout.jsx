@@ -44,8 +44,8 @@ export function AppLayout() {
         </ErrorBoundary>
       </main>
       {!isMapRoute && <Footer />}
-      {/* Burbuja flotante global — visible en todas las páginas excepto el mapa */}
-      {!isMapRoute && <TopRatedBubble />}
+      {/* Burbuja flotante — solo en la página principal */}
+      {pathname === '/' && <TopRatedBubble />}
       <ToastViewport />
     </div>
   );

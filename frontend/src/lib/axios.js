@@ -25,6 +25,9 @@ const api = axios.create({
     'Content-Type': 'application/json',
     Accept: 'application/json',
   },
+  // Timeout de 20 segundos — el backend en Render (plan gratuito) puede tardar
+  // hasta 50 s en despertar. Para peticiones de IA usamos un timeout mayor en el call.
+  timeout: 20000,
 });
 
 // ---------------------------------------------------------------------------

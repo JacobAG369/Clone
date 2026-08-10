@@ -28,8 +28,12 @@ export const getFavoriteRestaurants = async () => {
 };
 
 export const sendAiRecommendations = async () => {
-  const response = await api.post('/core/users/send-recommendations/');
+  // Timeout extendido: ML (RandomForest) + envío de correo + posible cold-start de Render
+  const response = await api.post('/core/users/send-recommendations/', {}, {
+    timeout: 60000,
+  });
   return response.data;
 };
+
 
 

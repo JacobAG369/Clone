@@ -164,7 +164,10 @@ export function ProfilePage() {
               {aiMutation.isPending ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin text-indigo-600" />
-                  <span>Procesando con IA...</span>
+                  <span className="flex flex-col items-start leading-tight">
+                    <span>Generando itinerario...</span>
+                    <span className="text-xs font-normal text-indigo-400">Puede tardar hasta 1 minuto</span>
+                  </span>
                 </>
               ) : (
                 <>
