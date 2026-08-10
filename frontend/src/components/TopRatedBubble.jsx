@@ -1,29 +1,76 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Star, X, MapPin, ChevronRight, Award, Trophy } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
+import { useLottie } from 'lottie-react';
+import upLottie from '../assets/up-lottie.json';
 import { useAuthStore } from '../store/useAuthStore';
 import { useMapStore } from '../store/useMapStore';
 import { getTopRatedPlaces } from '../api/places';
 
 export const TopRatedBubble = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const setMapCenter = useMapStore((s) => s.setMapCenter);
 
-  //  IMPORTANTE: todos los hooks DEBEN llamarse antes de cualquier return condicional
-  // (Rules of Hooks). El filtro de rol va DESPUÉS de los hooks.
-  const { data: topPlaces = [], isLoading } = useQuery({
-    queryKey: ['places', 'top-rated'],
-    queryFn: () => getTopRatedPlaces(5),
-    staleTime: 5 * 60 * 1000, // 5 min cache
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    const startY = window.scrollY;
+    const duration = 1000; // Duración en milisegundos (1 segundo)
+    const startTime = performance.now();
+
+    // Función de curva (Ease-In-Out) - Lento, rápido, lento
+    const easeInOutQuad = (t) => {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    };
+
+    const animateScroll = (currentTime) => {
+      const timeElapsed = currentTime - startTime;
+      const progress = Math.min(timeElapsed / duration, 1);
+
+      const ease = easeInOutQuad(progress);
+
+      window.scrollTo(0, startY * (1 - ease));
+
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animateScroll);
+      }
+    };
+
+    requestAnimationFrame(animateScroll);
+  };
+
+  const { View: UpLottieView } = useLottie({
+    animationData: upLottie,
+    loop: true,
+    style: {
+      width: '56px',
+      height: '56px'
+    }
   });
 
-  // Solo visible para usuarios turistas o visitantes no autenticados
+  // Solo visible para usuario turista o público en general desde el home
   if (user && (user.rol === 'admin' || user.rol === 'proveedor')) {
     return null;
   }
+
+  const { data: topPlaces = [], isLoading } = useQuery({
+    queryKey: ['places', 'top-rated'],
+    queryFn: () => getTopRatedPlaces(5),
+  });
 
   const handleExplore = (place) => {
     const lat = place.latitud || place.coordenadas?.lat;
@@ -37,6 +84,16 @@ export const TopRatedBubble = () => {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+      {/* Scroll to Top Button */}
+      <button
+        onClick={scrollToTop}
+        className={`absolute right-1 bottom-[80px] z-40 group flex items-center justify-center transition-all duration-300 hover:scale-110 ${showScrollTop ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+          }`}
+        title="Volver arriba"
+      >
+        {UpLottieView}
+      </button>
+
       {/* Modal / Card flotante expandido */}
       {isOpen && (
         <div className="mb-4 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
@@ -51,12 +108,12 @@ export const TopRatedBubble = () => {
             <div className="flex items-center gap-2 mb-1">
               <Trophy className="w-5 h-5 text-amber-200 animate-pulse" />
               <span className="text-xs font-bold uppercase tracking-wider bg-white/20 px-2.5 py-0.5 rounded-full">
-                Mejor Valorados
+                Bayesian Score
               </span>
             </div>
-            <h3 className="text-lg font-extrabold tracking-tight">Top 5 Destinos de Jalisco</h3>
+            <h3 className="text-lg font-extrabold tracking-tight">Top 5 Joyas de Jalisco</h3>
             <p className="text-xs text-amber-100 opacity-90 mt-1">
-              Los mejores destinos turísticos según la comunidad de Tu-Turismo.
+              Seleccionados por puntuación bayesiana equilibrada y comunidad turística.
             </p>
           </div>
 
@@ -120,7 +177,7 @@ export const TopRatedBubble = () => {
           {/* Footer modal */}
           <div className="bg-slate-50 dark:bg-slate-800/50 p-3 text-center border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] text-slate-400 font-medium">
-              Seleccionados por valoración de la comunidad turística
+              💡 Puntuación bayesiana ponderada para turistas
             </span>
           </div>
         </div>
