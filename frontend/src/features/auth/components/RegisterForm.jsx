@@ -50,7 +50,7 @@ export function RegisterForm({ onSuccess }) {
         {registerMutation.isError && (
           <div className="flex items-center gap-3 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/30 p-4 text-red-600 dark:text-red-400">
             <AlertCircle size={20} className="shrink-0" />
-            <p className="text-sm">{registerMutation.error?.response?.data?.message || 'No se pudo completar el registro.'}</p>
+            <p className="text-sm">{registerMutation.error?.response?.data?.detail || registerMutation.error?.response?.data?.error || registerMutation.error?.response?.data?.message || 'No se pudo completar el registro.'}</p>
           </div>
         )}
 

@@ -12,7 +12,7 @@ export const TopRatedBubble = () => {
   const { user } = useAuthStore();
   const setMapCenter = useMapStore((s) => s.setMapCenter);
 
-  // ⚠️ IMPORTANTE: todos los hooks DEBEN llamarse antes de cualquier return condicional
+  //  IMPORTANTE: todos los hooks DEBEN llamarse antes de cualquier return condicional
   // (Rules of Hooks). El filtro de rol va DESPUÉS de los hooks.
   const { data: topPlaces = [], isLoading } = useQuery({
     queryKey: ['places', 'top-rated'],
