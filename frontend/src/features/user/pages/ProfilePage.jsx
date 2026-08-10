@@ -146,7 +146,7 @@ export function ProfilePage() {
             <div className="space-y-2.5 max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wider uppercase border border-white/25">
                 <Sparkles className="w-4 h-4 text-amber-300 animate-spin" style={{ animationDuration: '4s' }} />
-                <span>Motor IA • Random Forest & K-Means</span>
+                <span>Motor de Recomendaciones IA</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black tracking-tight leading-tight">
                 ¿Listo para tu próximo itinerario turístico en Jalisco?
@@ -213,7 +213,7 @@ export function ProfilePage() {
                               {item.categoria || 'Atractivo'}
                             </span>
                             <span className="text-amber-300 font-black flex items-center gap-1 bg-black/20 px-2 py-0.5 rounded-full">
-                              ⭐ {Math.round(Number(item.probabilidad_ia || 0.88) * 100)}% Afinidad
+                              {Math.round(Number(item.probabilidad_ia || 0.88) * 100)}% Afinidad
                             </span>
                           </div>
                           <h5 className="font-extrabold text-white text-lg leading-tight line-clamp-1">{item.nombre}</h5>
@@ -222,7 +222,7 @@ export function ProfilePage() {
                           </p>
                         </div>
                         <p className="text-xs text-blue-100/90 mt-4 pt-3 border-t border-white/15 italic line-clamp-2 leading-relaxed">
-                          💡 {item.razon}
+                          {item.razon}
                         </p>
                       </div>
                     ))}
@@ -240,10 +240,10 @@ export function ProfilePage() {
                   <p className="font-extrabold text-white text-base">No se pudo generar el itinerario en este momento</p>
                   <p className="text-xs sm:text-sm text-red-200 mt-0.5">
                     {!aiMutation.error?.response
-                      ? '⚠️ Error de conexión: el servidor no está disponible. Verifica que el backend esté activo e intenta nuevamente.'
+                      ? ' Error de conexión: el servidor no está disponible. Verifica que el backend esté activo e intenta nuevamente.'
                       : aiMutation.error?.response?.status === 401
-                      ? '🔒 Tu sesión ha expirado. Cierra sesión y vuelve a iniciar.'
-                      : aiMutation.error?.response?.data?.error || aiMutation.error?.response?.data?.detail || aiMutation.error?.message || 'Error interno del servidor. Intenta nuevamente en unos momentos.'}
+                        ? ' Tu sesión ha expirado. Cierra sesión y vuelve a iniciar.'
+                        : aiMutation.error?.response?.data?.error || aiMutation.error?.response?.data?.detail || aiMutation.error?.message || 'Error interno del servidor. Intenta nuevamente en unos momentos.'}
                   </p>
                 </div>
               </div>
