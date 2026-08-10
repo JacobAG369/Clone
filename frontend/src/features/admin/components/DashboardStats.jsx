@@ -87,7 +87,7 @@ export function DashboardStats({ data, isLoading }) {
       {
         title: 'Índice de Afinidad IA',
         value: `${data?.growthRate || 94.8}%`,
-        subtitle: 'Precisión de Random Forest',
+        subtitle: 'Precisión',
         icon: Sparkles,
         gradient: 'from-purple-600 to-pink-600',
         bgGlow: 'bg-purple-500/10 dark:bg-purple-500/20',

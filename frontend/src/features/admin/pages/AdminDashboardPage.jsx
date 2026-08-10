@@ -244,8 +244,8 @@ export function AdminDashboardPage() {
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-4 text-sm font-bold text-white">
-                      <span className="px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm">📦 Total cargado: {resourcesQuery.data?.length || 0}</span>
-                      <span className="px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm">🏷️ Categorías disponibles: {categoriesQuery.data?.length || 0}</span>
+                      <span className="px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm">Total cargado: {resourcesQuery.data?.length || 0}</span>
+                      <span className="px-4 py-2 rounded-2xl bg-white/15 backdrop-blur-md border border-white/20 shadow-sm">Categorías disponibles: {categoriesQuery.data?.length || 0}</span>
                     </div>
                   </CardContent>
                 </Card>

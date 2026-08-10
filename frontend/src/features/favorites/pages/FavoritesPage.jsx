@@ -220,7 +220,7 @@ export function FavoritesPage() {
 
                       {/* Badge de Tipo */}
                       <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-800 dark:text-white shadow-md border border-white/20">
-                        {fav.tipo === 'restaurante' ? '🍽️ Restaurante' : fav.tipo === 'evento' ? '🎉 Evento' : '🏝️ Lugar'}
+                        {fav.tipo === 'restaurante' ? 'Restaurante' : fav.tipo === 'evento' ? 'Evento' : 'Lugar'}
                       </span>
 
                       {/* Botón flotante de Quitar Favorito */}
