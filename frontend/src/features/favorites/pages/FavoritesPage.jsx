@@ -1,38 +1,160 @@
 import { useState } from 'react';
-import { Heart, MapPin, Star, Calendar, Utensils, Sparkles, Trash2, ArrowRight, ShieldCheck, Compass } from 'lucide-react';
+import { Heart, MapPin, Star, Calendar, Utensils, Sparkles, Trash2, ArrowRight, Compass, WifiOff } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { useFavorites } from '../../../hooks/useFavorites';
+import { useLocalFavorites } from '../../../hooks/useLocalFavorites';
 import { useAuthStore } from '../../../store/useAuthStore';
-import { LugarCard } from '../../../components/ui/cards/LugarCard';
-import { EventoCard } from '../../../components/ui/cards/EventoCard';
 import { SkeletonCard } from '../../../components/ui/cards/SkeletonCard';
 
 export function FavoritesPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const { favoriteItems, favoritesQuery, removeFavoriteMutation, isEnriching } = useFavorites();
+  const { localFavorites, removeLocalFavorite, localFavoritesCount } = useLocalFavorites();
   const [activeTab, setActiveTab] = useState('todos');
 
+  // ---------------------------------------------------------------------------
+  // Vista para usuarios NO autenticados: muestra favoritos locales (localStorage)
+  // ---------------------------------------------------------------------------
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 py-16 px-4 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-slate-200 dark:border-slate-700 text-center space-y-6">
-          <div className="w-20 h-20 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
-            <Heart size={40} className="fill-current animate-pulse" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-black text-slate-900 dark:text-white">Inicia sesión para ver tus favoritos</h2>
-            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-              Guarda tus lugares, eventos y restaurantes preferidos de Jalisco para armar itinerarios y acceder rápidamente.
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-20">
+        {/* Hero */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-700 text-white pt-12 pb-24 shadow-xl">
+          <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 rounded-full bg-sky-400/20 blur-3xl pointer-events-none" />
+          <div className="container mx-auto px-4 max-w-6xl relative z-10">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-extrabold tracking-wider uppercase mb-4">
+              <WifiOff className="w-4 h-4 text-sky-200" />
+              <span>Guardados localmente &bull; Sin cuenta requerida</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-black tracking-tight flex items-center gap-3.5">
+              <span>Mis Favoritos</span>
+              <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-red-300 fill-current" />
+            </h1>
+            <p className="text-sky-100 text-sm sm:text-base max-w-xl leading-relaxed mt-3">
+              Tus lugares guardados en este dispositivo. Inicia sesi&oacute;n para sincronizarlos en todos tus dispositivos.
             </p>
+            <Link
+              to="/login"
+              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-white/15 hover:bg-white/25 backdrop-blur-md border border-white/20 text-sm font-bold transition-all"
+            >
+              Iniciar sesi&oacute;n para sincronizar <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
-          <Link to="/login" className="block w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-95">
-            Iniciar Sesión Ahora
-          </Link>
+        </div>
+
+        {/* Contenido */}
+        <div className="container mx-auto px-4 max-w-6xl -mt-10 relative z-20">
+          {localFavoritesCount === 0 ? (
+            <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-12 text-center border border-dashed border-slate-300 dark:border-slate-700 shadow-xl space-y-6 max-w-2xl mx-auto">
+              <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded-full flex items-center justify-center mx-auto">
+                <Heart size={36} className="stroke-2" />
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white">A&uacute;n no tienes favoritos</h3>
+                <p className="text-slate-500 dark:text-slate-400 text-sm max-w-md mx-auto leading-relaxed">
+                  Explora el mapa interactivo y toca el icono de coraz&oacute;n en cualquier lugar para guardarlo aqu&iacute;. No necesitas cuenta.
+                </p>
+              </div>
+              <Link
+                to="/map"
+                className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-600 text-white font-extrabold text-sm shadow-lg shadow-cyan-500/25 hover:scale-105 active:scale-95 transition-all"
+              >
+                <span>Explorar Mapa Tur&iacute;stico</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 pt-4">
+              {localFavorites.map((fav) => {
+                const rec = fav.recurso || {};
+                return (
+                  <div
+                    key={fav.referencia_id}
+                    className="group relative bg-white dark:bg-slate-900 rounded-3xl overflow-hidden border border-slate-200/80 dark:border-slate-800 shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Imagen */}
+                      <div className="relative h-48 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                        {rec.imagen ? (
+                          <img
+                            src={rec.imagen}
+                            alt={rec.nombre || 'Destino'}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-slate-400 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-800 dark:to-slate-900">
+                            <Compass className="w-10 h-10 text-cyan-500 animate-pulse" />
+                            <span className="text-xs font-bold">Jalisco Destino</span>
+                          </div>
+                        )}
+
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+
+                        {/* Badge tipo */}
+                        <span className="absolute top-3.5 left-3.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-white/90 dark:bg-slate-900/90 backdrop-blur-md text-slate-800 dark:text-white shadow-md border border-white/20">
+                          {fav.tipo === 'restaurante' ? 'Restaurante' : fav.tipo === 'evento' ? 'Evento' : 'Lugar'}
+                        </span>
+
+                        {/* Botón quitar favorito */}
+                        <button
+                          onClick={() => removeLocalFavorite(fav.referencia_id)}
+                          className="absolute top-3.5 right-3.5 w-9 h-9 rounded-full bg-red-500/90 hover:bg-red-600 text-white backdrop-blur-md flex items-center justify-center shadow-lg transition-all hover:scale-110 active:scale-90"
+                          title="Quitar de mis favoritos"
+                          aria-label="Quitar de favoritos"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+
+                        {/* Título sobre la imagen */}
+                        <div className="absolute bottom-3.5 left-3.5 right-3.5 text-white">
+                          <h3 className="text-lg font-black tracking-tight leading-snug line-clamp-1 group-hover:text-cyan-300 transition-colors">
+                            {rec.nombre || 'Destino en Jalisco'}
+                          </h3>
+                          <p className="text-xs text-slate-200 flex items-center gap-1.5 mt-0.5 font-medium">
+                            <MapPin className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                            <span>{rec.municipio || 'Jalisco, México'}</span>
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Descripci&oacute;n */}
+                      <div className="p-5 space-y-3">
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                          {rec.descripcion || 'Atractivo turístico destacado de Jalisco.'}
+                        </p>
+
+                        <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800 text-xs font-bold">
+                          <div className="flex items-center gap-1.5 text-amber-500">
+                            <Star className="w-4 h-4 fill-amber-500" />
+                            <span>{rec.rating ? `${Number(rec.rating).toFixed(1)} / 5.0` : 'Destacado'}</span>
+                          </div>
+                          <span className="text-slate-400 font-medium">Guardado localmente</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="p-3 pt-0">
+                      <Link
+                        to="/map"
+                        className="block w-full py-2.5 px-4 rounded-2xl bg-slate-100 dark:bg-slate-800/80 hover:bg-cyan-600 hover:text-white dark:hover:bg-cyan-600 text-slate-700 dark:text-slate-300 text-center text-xs font-extrabold tracking-wide transition-all duration-300"
+                      >
+                        Ver en el Mapa Interactivo &rarr;
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Vista para usuarios AUTENTICADOS: favoritos desde la API (comportamiento original)
+  // ---------------------------------------------------------------------------
   const isLoading = favoritesQuery.isLoading || isEnriching;
 
   // Filtrado por pestañas

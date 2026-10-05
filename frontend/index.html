@@ -1,11 +1,34 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/src/assets/tutu-miniatura.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tu-Turismo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/icon-192.png" />
+
+  <!-- ═══════════════════════════════════════════
+       FASE 3: PWA — Manifiesto y Meta Tags
+  ════════════════════════════════════════════ -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+
+  <!-- Color de la barra de estado en Android Chrome -->
+  <meta name="theme-color" content="#0ea5e9" />
+
+  <!-- Apple PWA (iOS Safari) -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TuTurismo" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+
+  <!-- Meta descripción (SEO + install prompt) -->
+  <meta
+    name="description"
+    content="Descubre los mejores lugares turísticos, eventos y restaurantes de Jalisco. Explora el mapa interactivo y guarda tus favoritos."
+  />
+
+  <title>Tu-Turismo — Explora Jalisco</title>
 </head>
 
 <body>
@@ -13,4 +36,4 @@
   <script type="module" src="/src/main.jsx"></script>
 </body>
 
-</html>
+</html>

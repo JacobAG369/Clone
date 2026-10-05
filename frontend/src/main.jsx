@@ -37,3 +37,19 @@ createRoot(document.getElementById('root')).render(
     </ErrorBoundary>
   </StrictMode>,
 )
+
+// ─────────────────────────────────────────────────────────────
+// FASE 4: Registro del Service Worker (PWA — soporte offline)
+// ─────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js', { scope: '/' })
+      .then((registration) => {
+        console.log('[PWA] Service Worker registrado. Scope:', registration.scope);
+      })
+      .catch((error) => {
+        console.error('[PWA] Error al registrar el Service Worker:', error);
+      });
+  });
+}

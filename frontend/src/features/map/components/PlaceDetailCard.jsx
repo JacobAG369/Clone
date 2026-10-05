@@ -3,22 +3,26 @@ import { Heart, MapPin, Phone, Globe, Clock, Star, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useFavorites } from '../../../hooks/useFavorites';
+import { useLocalFavorites } from '../../../hooks/useLocalFavorites';
 
 export default function PlaceDetailCard({ marker, onClose }) {
   const { isAuthenticated } = useAuthStore();
   const { isFavorite, toggleFavorite, isUpdatingFavorite } = useFavorites();
+  const { isLocalFavorite, toggleLocalFavorite } = useLocalFavorites();
 
   if (!marker) return null;
 
-  const favorited = isFavorite(marker.id);
+  // Un recurso está favorito si lo está localmente O en la API (usuario autenticado)
+  const favorited = isLocalFavorite(marker.id) || isFavorite(marker.id);
 
   const handleFavoriteClick = () => {
-    if (!isAuthenticated) {
-      alert('Debes iniciar sesión para agregar a favoritos');
-      return;
-    }
+    // Siempre guarda en localStorage (funciona offline y sin auth)
+    toggleLocalFavorite(marker);
 
-    toggleFavorite(marker);
+    // Si además está autenticado, sincroniza también con el backend
+    if (isAuthenticated) {
+      toggleFavorite(marker);
+    }
   };
 
   return (
