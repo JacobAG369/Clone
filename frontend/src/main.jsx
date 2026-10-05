@@ -38,6 +38,12 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
+// Manejo automático de chunks obsoletos tras nuevo despliegue en producción
+window.addEventListener('vite:preloadError', (event) => {
+  console.warn('[Vite] Error al precargar chunk dinámico. Recargando aplicación...', event);
+  window.location.reload();
+});
+
 // ─────────────────────────────────────────────────────────────
 // FASE 4: Registro del Service Worker (PWA — soporte offline)
 // ─────────────────────────────────────────────────────────────

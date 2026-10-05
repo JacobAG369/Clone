@@ -10,13 +10,11 @@
  *    intenta la red; si falla, devuelve la respuesta cacheada si existe.
  */
 
-const APP_VERSION    = 'tuturismo-v4';
+const APP_VERSION    = 'tuturismo-v5';
 const SHELL_CACHE    = `${APP_VERSION}-shell`;
 const RUNTIME_CACHE  = `${APP_VERSION}-runtime`;
 
 // Activos del App Shell que se precachean en el install
-// Nota: Vite genera hashes en los nombres de bundle; el / y el index.html
-// son suficientes para garantizar la carga offline de la SPA.
 const APP_SHELL_ASSETS = [
   '/',
   '/index.html',
@@ -28,6 +26,7 @@ const APP_SHELL_ASSETS = [
   '/apple-touch-icon.png',
   '/favicon-48.png',
   '/favicon.svg',
+  '/favicon.ico',
 ];
 
 // ─────────────────────────────────────────────
@@ -36,7 +35,6 @@ const APP_SHELL_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE).then(async (cache) => {
-      // Usamos Promise.allSettled para asegurar que la instalación nunca falle por un recurso individual
       await Promise.allSettled(
         APP_SHELL_ASSETS.map((asset) =>
           cache.add(asset).catch((err) => {
@@ -45,7 +43,7 @@ self.addEventListener('install', (event) => {
         )
       );
     }).then(() => {
-      // Activa inmediatamente sin esperar que cierren otras pestañas
+      // Forzar activación inmediata
       return self.skipWaiting();
     })
   );
@@ -81,27 +79,45 @@ self.addEventListener('fetch', (event) => {
   // Solo interceptamos GET; ignoramos POST/PUT/DELETE
   if (request.method !== 'GET') return;
 
-  // Ignoramos chrome-extension y otros esquemas no-http
+  // Ignoramos esquemas no-http
   if (!url.protocol.startsWith('http')) return;
 
-  // Ignorar herramientas de desarrollo de Vite (HMR, React Refresh) para no interferir en dev
+  // Ignorar herramientas de desarrollo de Vite
   if (url.pathname.includes('@vite') || url.pathname.includes('@react-refresh') || url.pathname.includes('__vite_ping')) {
     return;
   }
 
   // ── 1. Llamadas a la API de Django → Network-First ──────────────────────
-  if (url.pathname.startsWith('/api/') || url.hostname.includes('tuturismo')) {
+  if (url.pathname.startsWith('/api/')) {
     event.respondWith(networkFirstWithCache(request, RUNTIME_CACHE));
     return;
   }
 
-  // ── 2. App Shell (/, /index.html, /manifest, /icons) → Cache-First ──────
-  if (APP_SHELL_ASSETS.some((asset) => url.pathname === asset || url.pathname === '/')) {
-    event.respondWith(cacheFirstWithNetworkFallback(request, SHELL_CACHE));
+  // ── 2. Navegación SPA y HTML (/, /index.html, /map, etc.) → Network-First
+  //    SIEMPRE busca la versión más reciente en la red para evitar chunks desactualizados;
+  //    si no hay internet (offline), usa la versión cacheada de /index.html.
+  if (request.mode === 'navigate' || url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            const clone = response.clone();
+            caches.open(SHELL_CACHE).then((cache) => cache.put('/index.html', clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match('/index.html', { cacheName: SHELL_CACHE }))
+    );
     return;
   }
 
-  // ── 3. Activos de Vite (JS, CSS con hash) → Cache-First + Runtime ────────
+  // ── 3. Activos estáticos del App Shell (manifiesto, iconos) → Stale-While-Revalidate
+  if (APP_SHELL_ASSETS.includes(url.pathname)) {
+    event.respondWith(staleWhileRevalidate(request, SHELL_CACHE));
+    return;
+  }
+
+  // ── 4. Activos con hash de Vite (JS, CSS) → Cache-First con fallback a red
   if (
     url.pathname.match(/\.(js|css|woff2?|ttf|otf)$/) ||
     url.pathname.startsWith('/assets/')
@@ -110,20 +126,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // ── 4. Imágenes (locales y CDN externa) → Stale-While-Revalidate ─────────
+  // ── 5. Imágenes (locales y remotas) → Stale-While-Revalidate
   if (url.pathname.match(/\.(png|jpg|jpeg|webp|gif|svg|ico)$/)) {
     event.respondWith(staleWhileRevalidate(request, RUNTIME_CACHE));
-    return;
-  }
-
-  // ── 5. Navegación SPA (cualquier ruta que no coincida arriba) ─────────────
-  //    Devuelve /index.html para que React Router maneje el enrutado client-side
-  if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request).catch(() =>
-        caches.match('/index.html', { cacheName: SHELL_CACHE })
-      )
-    );
     return;
   }
 });

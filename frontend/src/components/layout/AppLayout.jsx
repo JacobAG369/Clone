@@ -39,11 +39,11 @@ export function AppLayout() {
   }, [theme]);
 
   return (
-    <div className="min-h-[100dvh] flex flex-col pt-0 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className={`min-h-[100dvh] flex flex-col pt-0 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 ${isMapRoute ? 'h-[100dvh] overflow-hidden' : ''}`}>
       {/* FASE 4: Aviso de sin conexión — se monta sobre todo el layout */}
       <OfflineBanner />
       <Header />
-      <main className={`flex-1 flex flex-col ${isMapRoute ? 'pb-0 overflow-hidden' : 'pb-20 md:pb-0'}`}>
+      <main className={`flex-1 flex flex-col relative w-full ${isMapRoute ? 'pb-0 overflow-hidden h-[calc(100dvh-64px)] sm:h-[calc(100dvh-72px)] min-h-[500px]' : 'pb-20 md:pb-0'}`}>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>

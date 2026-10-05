@@ -257,7 +257,7 @@ export default function MainMap() {
   const defaultCenter = [20.6668, -103.3518]; // Guadalajara / Jalisco centro
 
   return (
-    <div className="relative w-full h-full flex-1 min-h-0 z-0 bg-slate-100 dark:bg-slate-900 transition-colors duration-300 overflow-hidden">
+    <div className="relative w-full h-full flex-1 min-h-[500px] z-0 bg-slate-100 dark:bg-slate-900 transition-colors duration-300 overflow-hidden">
       
       {/* 1. Barra de búsqueda superior (Punto 1) */}
       <MapSearchBar allMarkers={allMarkers} />
@@ -287,8 +287,8 @@ export default function MainMap() {
         center={defaultCenter}
         zoom={13}
         zoomControl={false}
-        className="w-full h-full min-h-0 z-0 font-sans"
-        style={{ width: '100%', height: '100%', zIndex: 0 }}
+        className="w-full h-full min-h-[500px] z-0 font-sans"
+        style={{ width: '100%', height: '100%', minHeight: '500px', zIndex: 0 }}
       >
         <TileLayer
           key={mapTheme === 'dark' || theme === 'dark' ? 'dark' : 'light'}
