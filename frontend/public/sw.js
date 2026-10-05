@@ -10,7 +10,7 @@
  *    intenta la red; si falla, devuelve la respuesta cacheada si existe.
  */
 
-const APP_VERSION    = 'tuturismo-v1';
+const APP_VERSION    = 'tuturismo-v2';
 const SHELL_CACHE    = `${APP_VERSION}-shell`;
 const RUNTIME_CACHE  = `${APP_VERSION}-runtime`;
 
