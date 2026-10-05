@@ -72,6 +72,11 @@ self.addEventListener('fetch', (event) => {
   // Ignoramos chrome-extension y otros esquemas no-http
   if (!url.protocol.startsWith('http')) return;
 
+  // Ignorar herramientas de desarrollo de Vite (HMR, React Refresh) para no interferir en dev
+  if (url.pathname.includes('@vite') || url.pathname.includes('@react-refresh') || url.pathname.includes('__vite_ping')) {
+    return;
+  }
+
   // ── 1. Llamadas a la API de Django → Network-First ──────────────────────
   if (url.pathname.startsWith('/api/') || url.hostname.includes('tuturismo')) {
     event.respondWith(networkFirstWithCache(request, RUNTIME_CACHE));

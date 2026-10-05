@@ -22,8 +22,19 @@ import MapAdvancedFiltersModal from './MapAdvancedFiltersModal';
 import ExploreNearbyControls from './ExploreNearbyControls';
 import FloatingFilters from './FloatingFilters';
 
-const LightTiles = 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
-const DarkTiles = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
+const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
+
+const LightTiles = cartoKey
+  ? `https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`
+  : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+const DarkTiles = cartoKey
+  ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${cartoKey}`
+  : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+
+const mapAttribution = cartoKey
+  ? '&copy; <a href="https://carto.com/attributions">CARTO</a>'
+  : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 // Subcomponent to automatically fit bounds on category change
 function MapUpdater({ markers, selectedCategory }) {
@@ -280,8 +291,11 @@ export default function MainMap() {
         style={{ width: '100%', height: '100%', zIndex: 0 }}
       >
         <TileLayer
-          attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
+          key={mapTheme === 'dark' || theme === 'dark' ? 'dark' : 'light'}
+          attribution={mapAttribution}
           url={mapTheme === 'dark' || theme === 'dark' ? DarkTiles : LightTiles}
+          className={(mapTheme === 'dark' || theme === 'dark') && !cartoKey ? 'map-tiles-dark' : ''}
+          maxZoom={19}
         />
 
         <MarkersLayer
