@@ -67,11 +67,11 @@ export default function MapSidebar({ marker, onClose }) {
   };
 
   return (
-    <div className="absolute top-20 bottom-6 right-4 md:right-6 w-[calc(100%-2rem)] md:w-[420px] z-[460] transition-all duration-300 pointer-events-auto transform-gpu animate-in fade-in-0 slide-in-from-right-8">
-      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col h-full max-h-[calc(100vh-110px)]">
+    <div className="absolute top-16 sm:top-20 bottom-3 sm:bottom-6 right-2 sm:right-4 md:right-6 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] md:w-[420px] z-[470] transition-all duration-300 pointer-events-auto transform-gpu animate-in fade-in-0 slide-in-from-right-8">
+      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col h-full max-h-[calc(100dvh-80px)] sm:max-h-[calc(100dvh-100px)]">
         
         {/* Header con Imagen */}
-        <div className="relative h-64 bg-slate-200 dark:bg-slate-800 shrink-0 w-full overflow-hidden group">
+        <div className="relative h-48 sm:h-56 md:h-64 bg-slate-200 dark:bg-slate-800 shrink-0 w-full overflow-hidden group">
           {marker.imagen_url ? (
             <img 
               src={marker.imagen_url} 

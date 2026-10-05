@@ -10,7 +10,7 @@
  *    intenta la red; si falla, devuelve la respuesta cacheada si existe.
  */
 
-const APP_VERSION    = 'tuturismo-v3';
+const APP_VERSION    = 'tuturismo-v4';
 const SHELL_CACHE    = `${APP_VERSION}-shell`;
 const RUNTIME_CACHE  = `${APP_VERSION}-runtime`;
 
@@ -23,15 +23,27 @@ const APP_SHELL_ASSETS = [
   '/manifest.webmanifest',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable-192.png',
+  '/icon-maskable-512.png',
+  '/apple-touch-icon.png',
+  '/favicon-48.png',
+  '/favicon.svg',
 ];
 
 // ─────────────────────────────────────────────
-// INSTALL — precachear App Shell
+// INSTALL — precachear App Shell de forma resiliente
 // ─────────────────────────────────────────────
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(SHELL_CACHE).then((cache) => {
-      return cache.addAll(APP_SHELL_ASSETS);
+    caches.open(SHELL_CACHE).then(async (cache) => {
+      // Usamos Promise.allSettled para asegurar que la instalación nunca falle por un recurso individual
+      await Promise.allSettled(
+        APP_SHELL_ASSETS.map((asset) =>
+          cache.add(asset).catch((err) => {
+            console.warn('[SW] No se pudo precachear:', asset, err);
+          })
+        )
+      );
     }).then(() => {
       // Activa inmediatamente sin esperar que cierren otras pestañas
       return self.skipWaiting();

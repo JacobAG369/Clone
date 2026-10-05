@@ -9,6 +9,7 @@ import { useThemeStore } from '../../store/useThemeStore';
 import { ToastViewport } from '../ui/toast';
 import { ErrorBoundary } from '../common/ErrorBoundary';
 import { TopRatedBubble } from '../TopRatedBubble';
+import { PWAInstallBanner } from '../common/PWAInstallBanner';
 
 export function AppLayout() {
   const theme = useThemeStore((state) => state.theme);
@@ -38,11 +39,11 @@ export function AppLayout() {
   }, [theme]);
 
   return (
-    <div className="min-h-screen flex flex-col pt-0 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="min-h-[100dvh] flex flex-col pt-0 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100">
       {/* FASE 4: Aviso de sin conexión — se monta sobre todo el layout */}
       <OfflineBanner />
       <Header />
-      <main className="flex-1 flex flex-col pb-20 md:pb-0">
+      <main className={`flex-1 flex flex-col ${isMapRoute ? 'pb-0 overflow-hidden' : 'pb-20 md:pb-0'}`}>
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
@@ -50,6 +51,8 @@ export function AppLayout() {
       {!isMapRoute && <Footer />}
       {/* Burbuja flotante — solo en la página principal */}
       {pathname === '/' && <TopRatedBubble />}
+      {/* Banner de instalación PWA */}
+      <PWAInstallBanner />
       {/* Bottom nav: visible únicamente en móvil (md:hidden interno) */}
       <BottomNavBar />
       <ToastViewport />

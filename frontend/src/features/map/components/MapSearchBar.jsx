@@ -83,16 +83,16 @@ export default function MapSearchBar({ allMarkers = [] }) {
   return (
     <div
       ref={containerRef}
-      className="absolute top-4 left-1/2 -translate-x-1/2 z-[450] w-[calc(100%-2rem)] max-w-lg transition-all duration-300 pointer-events-auto"
+      className="absolute top-2.5 sm:top-4 left-1/2 -translate-x-1/2 z-[450] w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-lg transition-all duration-300 pointer-events-auto"
     >
       <form
         onSubmit={handleSubmit}
-        className={`relative flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 transition-all duration-300 ${
-          isFocused ? 'ring-4 ring-brand-500/25 border-brand-500 shadow-brand-500/10 scale-[1.01]' : 'hover:border-slate-300 dark:hover:border-slate-600'
+        className={`relative flex items-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-700/80 transition-all duration-300 ${
+          isFocused ? 'ring-2 sm:ring-4 ring-brand-500/25 border-brand-500 shadow-brand-500/10 scale-[1.005]' : 'hover:border-slate-300 dark:hover:border-slate-600'
         }`}
       >
-        <div className="pl-4 text-brand-500 dark:text-brand-400">
-          <Search size={20} className="stroke-[2.5]" />
+        <div className="pl-3 sm:pl-4 text-brand-500 dark:text-brand-400">
+          <Search size={18} className="stroke-[2.5]" />
         </div>
 
         <input
@@ -103,8 +103,8 @@ export default function MapSearchBar({ allMarkers = [] }) {
             setSearchQuery(e.target.value);
           }}
           onFocus={() => setIsFocused(true)}
-          placeholder="Buscar destinos, restaurantes, museos o ciudades..."
-          className="w-full bg-transparent px-3 py-3.5 text-sm font-medium text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
+          placeholder="Buscar destinos, eventos o lugares..."
+          className="w-full bg-transparent px-2.5 sm:px-3 py-2.5 sm:py-3.5 text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none"
           aria-label="Barra de búsqueda de lugares turísticos"
         />
 
@@ -112,16 +112,16 @@ export default function MapSearchBar({ allMarkers = [] }) {
           <button
             type="button"
             onClick={handleClear}
-            className="p-2 mr-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
+            className="p-1.5 sm:p-2 mr-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
             aria-label="Limpiar búsqueda"
           >
-            <X size={18} />
+            <X size={16} />
           </button>
         )}
 
         <button
           type="submit"
-          className="mr-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-500/25 shrink-0"
+          className="mr-1.5 sm:mr-2 px-3 sm:px-4 py-1.5 sm:py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 active:scale-95 text-white text-[11px] sm:text-xs font-bold rounded-xl transition-all shadow-md shadow-blue-500/25 shrink-0"
         >
           Buscar
         </button>

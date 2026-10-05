@@ -18,6 +18,18 @@
     background-color: #475569;
   }
 
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   /* Prevent leaflet from swallowing our tailwind classes context on icons */
   .custom-leaflet-icon-container {
     background: transparent;

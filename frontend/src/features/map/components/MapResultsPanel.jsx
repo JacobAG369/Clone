@@ -25,8 +25,8 @@ export default function MapResultsPanel({ markers = [], isLoading = false }) {
   if (!showResultsPanel) return null;
 
   return (
-    <div className="absolute top-20 bottom-6 left-4 md:left-6 w-[calc(100%-2rem)] md:w-[380px] z-[440] transition-all duration-300 pointer-events-auto transform-gpu animate-in fade-in-0 slide-in-from-left-8">
-      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col h-full max-h-[calc(100vh-110px)]">
+    <div className="absolute top-16 sm:top-20 bottom-3 sm:bottom-6 left-2 sm:left-4 md:left-6 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] md:w-[380px] z-[460] transition-all duration-300 pointer-events-auto transform-gpu animate-in fade-in-0 slide-in-from-left-8">
+      <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-2xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-700/80 overflow-hidden flex flex-col h-full max-h-[calc(100dvh-80px)] sm:max-h-[calc(100dvh-100px)]">
         
         {/* Encabezado del panel */}
         <div className="p-4 px-5 bg-gradient-to-r from-slate-50 to-white dark:from-slate-800/80 dark:to-slate-900/80 border-b border-slate-200/80 dark:border-slate-700/80 flex items-center justify-between shrink-0">

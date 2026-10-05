@@ -13,7 +13,7 @@ export default function NavigationMapPage() {
   }, [resetMapTheme]);
 
   return (
-    <div className="flex flex-1 min-h-[600px] h-[calc(100vh-70px)] overflow-hidden">
+    <div className="flex flex-1 w-full h-[calc(100dvh-64px)] sm:h-[calc(100dvh-72px)] overflow-hidden relative">
       <MainMap />
     </div>
   );
