@@ -24,9 +24,54 @@
     border: none;
   }
 
-  /* Modo oscuro para tiles de OpenStreetMap sin API key */
+  /* ═══════════════════════════════════════════════════════════════
+     ESTILIZADO PREMIUM DE MAPA (OpenStreetMap / Leaflet)
+     Transforma los tiles estándar a un estilo limpio y suave (tipo Carto/Apple)
+     ═══════════════════════════════════════════════════════════════ */
+
+  /* Modo Claro: Suaviza los verdes intensos y líneas rojas de OpenStreetMap */
+  .map-tiles-light {
+    filter: saturate(0.5) contrast(0.93) brightness(1.05);
+    transition: filter 0.3s ease;
+  }
+
+  /* Modo Oscuro: Invierte colores a tonos slate/azul marino profundo */
   .map-tiles-dark {
-    filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+    transition: filter 0.3s ease;
+  }
+
+  /* Contenedor del mapa y fondo para evitar destellos blancos */
+  .leaflet-container {
+    background-color: #f1f5f9;
+  }
+  .dark .leaflet-container {
+    background-color: #0f172a;
+  }
+
+  /* Attribution widget flotante estilizado con glassmorphism */
+  .leaflet-control-attribution {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(8px) !important;
+    border-radius: 8px 0 0 0 !important;
+    font-size: 10px !important;
+    color: #64748b !important;
+    padding: 3px 10px !important;
+    border-top: 1px solid rgba(226, 232, 240, 0.8) !important;
+    border-left: 1px solid rgba(226, 232, 240, 0.8) !important;
+  }
+  .dark .leaflet-control-attribution {
+    background: rgba(15, 23, 42, 0.85) !important;
+    color: #94a3b8 !important;
+    border-color: rgba(51, 65, 85, 0.8) !important;
+  }
+  .leaflet-control-attribution a {
+    color: inherit !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+  }
+  .leaflet-control-attribution a:hover {
+    text-decoration: underline !important;
   }
 }
 

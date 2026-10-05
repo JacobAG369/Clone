@@ -294,7 +294,7 @@ export default function MainMap() {
           key={mapTheme === 'dark' || theme === 'dark' ? 'dark' : 'light'}
           attribution={mapAttribution}
           url={mapTheme === 'dark' || theme === 'dark' ? DarkTiles : LightTiles}
-          className={(mapTheme === 'dark' || theme === 'dark') && !cartoKey ? 'map-tiles-dark' : ''}
+          className={(mapTheme === 'dark' || theme === 'dark') ? 'map-tiles-dark' : 'map-tiles-light'}
           maxZoom={19}
         />
 
