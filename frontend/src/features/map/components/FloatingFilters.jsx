@@ -3,10 +3,12 @@ import { SlidersHorizontal, ListFilter, Moon, Sun, Monitor } from 'lucide-react'
 import { CATEGORIES } from '../utils/icons';
 import { useMapStore } from '../../../store/useMapStore';
 import { useThemeStore } from '../../../store/useThemeStore';
+import { useGeneracionesStore, JUNIOR_CATEGORIES } from '../../../store/useGeneracionesStore';
 
 export default function FloatingFilters({ onOpenFilters, markersCount = 0 }) {
   const { activeCategory, setActiveCategory, showResultsPanel, toggleResultsPanel, filters } = useMapStore();
   const { theme, mapTheme, toggleTheme, toggleMapTheme } = useThemeStore();
+  const { isJuniorMode, activeJuniorCategory, setActiveJuniorCategory } = useGeneracionesStore();
 
   // Calcular cuántos filtros avanzados están activos
   const activeFiltersCount = Object.entries(filters).filter(([key, val]) => {
@@ -96,7 +98,7 @@ export default function FloatingFilters({ onOpenFilters, markersCount = 0 }) {
           onClick={onOpenFilters}
           className={`flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl sm:rounded-2xl font-bold text-[11px] sm:text-xs shadow-lg backdrop-blur-xl transition-all duration-300 border ${
             activeFiltersCount > 0
-              ? 'bg-purple-600 text-white border-purple-400 ring-2 ring-purple-500/30'
+              ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-blue-400 ring-2 ring-blue-500/30 shadow-md'
               : 'bg-white/95 dark:bg-slate-900/95 text-slate-800 dark:text-slate-100 border-slate-200/80 dark:border-slate-700/80 hover:border-slate-300'
           }`}
         >
@@ -124,7 +126,30 @@ export default function FloatingFilters({ onOpenFilters, markersCount = 0 }) {
           <span>{mapTheme === 'dark' || theme === 'dark' ? 'Oscuro' : 'Claro'}</span>
         </button>
       </div>
+
+      {/* 3. Dock de Categorías Junior (Modo Tu-Turismo Nuevas Generaciones 10-16 años) */}
+      {isJuniorMode && (
+        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[450] flex gap-2 pointer-events-auto bg-slate-900/60 p-1.5 rounded-3xl backdrop-blur-md shadow-2xl border border-white/10">
+          {JUNIOR_CATEGORIES.map((cat) => {
+            const isActive = activeJuniorCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setActiveJuniorCategory(isActive ? null : cat.id)}
+                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-2xl text-white font-bold text-xs shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-br ${cat.color} ${
+                  isActive ? 'ring-4 ring-white/50 scale-110 shadow-2xl' : 'opacity-85 hover:opacity-100'
+                }`}
+                title={cat.sublabel}
+              >
+                <span className="text-lg leading-none">{cat.label.split(' ')[0]}</span>
+                <span className="text-[10px] font-bold leading-tight whitespace-nowrap">
+                  {cat.label.split(' ').slice(1).join(' ')}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 }
-

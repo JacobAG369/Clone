@@ -5,6 +5,10 @@ import { Heart, Navigation } from 'lucide-react';
 import L from 'leaflet';
 import { renderToString } from 'react-dom/server';
 
+import KioskAttractorScreen from './KioskAttractorScreen';
+import KioskQRModal from './KioskQRModal';
+import { useKioskIdle } from '../../../hooks/useKioskIdle';
+
 import { useThemeStore } from '../../../store/useThemeStore';
 import { useFavorites } from '../../../hooks/useFavorites';
 import { mapApi } from '../../../api/map';
@@ -102,6 +106,39 @@ function UserLocationLayer({ userLocation }) {
     };
   }, [userLocation, map]);
 
+  return null;
+}
+
+// Marcador fijo del Kiosco "Estás Aquí"
+const KIOSK_POSITION = [20.6767, -103.3475]; // Plaza de Armas, Guadalajara
+
+function KioskAnchorLayer() {
+  const map = useMap();
+  useEffect(() => {
+    const pulseIcon = L.divIcon({
+      html: `<div class="relative flex items-center justify-center w-12 h-12">
+        <span class="absolute inline-flex w-full h-full rounded-full bg-amber-400 opacity-60 animate-ping"></span>
+        <span class="relative flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 border-3 border-white rounded-full shadow-2xl text-white font-bold text-xs">📍</span>
+      </div>`,
+      className: 'bg-transparent border-none',
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+    });
+
+    const marker = L.marker(KIOSK_POSITION, { icon: pulseIcon, zIndexOffset: 2000 })
+      .addTo(map)
+      .bindTooltip('📍 Tú estás aquí', { permanent: false, className: 'font-bold text-sm' });
+
+    // Círculos de proximidad (5 min ≈ 400m, 15 min ≈ 1200m)
+    const ring1 = L.circle(KIOSK_POSITION, { radius: 400, color: '#f59e0b', weight: 2, fillOpacity: 0.04, dashArray: '8 4' }).addTo(map);
+    const ring2 = L.circle(KIOSK_POSITION, { radius: 1200, color: '#06b6d4', weight: 1.5, fillOpacity: 0.03, dashArray: '8 4' }).addTo(map);
+
+    return () => {
+      map.removeLayer(marker);
+      map.removeLayer(ring1);
+      map.removeLayer(ring2);
+    };
+  }, [map]);
   return null;
 }
 
@@ -210,6 +247,8 @@ export default function MainMap() {
   } = useMapStore();
 
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
+  const { isIdle, resetTimer } = useKioskIdle(75000);
+  const [qrMarker, setQrMarker] = useState(null);
 
   // Convertir favoriteItems a IDs
   const favoriteIds = useMemo(() => {
@@ -302,10 +341,15 @@ export default function MainMap() {
           markers={filteredMarkers}
           favoriteIds={favoriteIds}
           selectedMarkerId={selectedMarkerId}
-          onMarkerClick={setSelectedMarkerId}
+          onMarkerClick={(id) => {
+            setSelectedMarkerId(id);
+            const m = filteredMarkers.find(fm => fm.id === id);
+            if (m) setQrMarker(m);
+          }}
         />
 
         <UserLocationLayer userLocation={userLocation} />
+        <KioskAnchorLayer />
 
         <MapUpdater markers={filteredMarkers} selectedCategory={activeCategory} />
         <SelectedMarkerFlyTo selectedMarker={selectedMarker} />
@@ -331,6 +375,12 @@ export default function MainMap() {
         isOpen={isAdvancedFiltersOpen}
         onClose={() => setIsAdvancedFiltersOpen(false)}
       />
+
+      {/* Kiosk: Attractor Screen (salvapantallas tras inactividad) */}
+      {isIdle && <KioskAttractorScreen onInteract={resetTimer} />}
+
+      {/* Kiosk: QR Modal para llevar ruta al móvil */}
+      {qrMarker && <KioskQRModal marker={qrMarker} onClose={() => setQrMarker(null)} />}
     </div>
   );
 }

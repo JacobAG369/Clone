@@ -9,6 +9,7 @@ import { useThemeStore } from '../../store/useThemeStore';
 import { ToastViewport } from '../ui/toast';
 import { ErrorBoundary } from '../common/ErrorBoundary';
 import { TopRatedBubble } from '../TopRatedBubble';
+import NuevasGeneracionesBubble from '../../features/junior/NuevasGeneracionesBubble';
 import { PWAInstallBanner } from '../common/PWAInstallBanner';
 
 export function AppLayout() {
@@ -51,6 +52,7 @@ export function AppLayout() {
       {!isMapRoute && <Footer />}
       {/* Burbuja flotante — solo en la página principal */}
       {pathname === '/' && <TopRatedBubble />}
+      <NuevasGeneracionesBubble />
       {/* Banner de instalación PWA */}
       <PWAInstallBanner />
       {/* Bottom nav: visible únicamente en móvil (md:hidden interno) */}

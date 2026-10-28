@@ -17,7 +17,9 @@ export function useNotifications() {
     queryKey: NOTIFICATIONS_QUERY_KEY,
     queryFn: notificationsApi.getNotifications,
     enabled: isAuthenticated,
-    staleTime: 30000,
+    staleTime: 15000,
+    refetchInterval: isAuthenticated ? 20000 : false, // polling cada 20s cuando autenticado
+    refetchIntervalInBackground: false,
     placeholderData: [],
   });
 

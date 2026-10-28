@@ -117,6 +117,8 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
       if (key === 'imagen') {
         if (value instanceof File) {
           payload.append('imagen', value);
+        } else if (initialData?.imagen_url || initialData?.imagen) {
+          payload.append('imagen_url', initialData.imagen_url || initialData.imagen);
         }
         return;
       }
