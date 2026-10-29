@@ -1,224 +1,183 @@
 /**
- * NuevasGeneracionesPanel — panel del modo adaptado para usuarios jóvenes (10 a 16 años).
- * Permite explorar por intereses juveniles, seguir insignias y activar el filtrado en el mapa.
+ * NuevasGeneracionesPanel — Modal de aviso de inmersión para el público de 10 a 16 años.
+ * Informa al usuario que está a punto de emerger en una experiencia personalizada
+ * para su edad y redirige al menú principal exclusivo de Nuevas Generaciones.
+ * Sin emojis. Estilo fusión Tu-Turismo (Cyan/Indigo) + Jalisco (Agave Teal, Ámbar, Terracota).
  */
 import React from 'react';
-import { X, Trophy, Sparkles, MapPin, Award, Compass, UtensilsCrossed, FlaskConical, Camera } from 'lucide-react';
-import { useGeneracionesStore, JUNIOR_CATEGORIES } from '../../store/useGeneracionesStore';
+import {
+  X,
+  Compass,
+  Sparkles,
+  Flame,
+  ShieldCheck,
+  ArrowRight,
+  ArrowLeftRight,
+  Layers,
+} from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
-
-const JUNIOR_ICONS = {
-  aventura: Compass,
-  antojos: UtensilsCrossed,
-  curiosidades: FlaskConical,
-  aesthetic: Camera,
-};
-
-const BADGES_INFO = {
-  explorador_bronce: { label: 'Explorador Bronce', desc: 'Visitaste 3 lugares' },
-  explorador_plata: { label: 'Explorador Plata', desc: 'Visitaste 10 lugares' },
-  explorador_oro: { label: 'Explorador Oro', desc: 'Visitaste 25 lugares' },
-};
+import { useGeneracionesStore } from '../../store/useGeneracionesStore';
+import catedralImg from '../../assets/catedral.jpg';
 
 export default function NuevasGeneracionesPanel({ onClose }) {
-  const {
-    isJuniorMode,
-    setJuniorMode,
-    toggleJuniorMode,
-    activeJuniorCategory,
-    setActiveJuniorCategory,
-    badges,
-    collectedSpots,
-  } = useGeneracionesStore();
-
+  const { isJuniorMode, setJuniorMode, setActiveJuniorCategory } = useGeneracionesStore();
   const navigate = useNavigate();
 
-  const handleSelectCategory = (categoryId) => {
-    if (!isJuniorMode) {
-      setJuniorMode(true);
-    }
-    setActiveJuniorCategory(categoryId);
-    onClose();
-    navigate({ to: '/map' });
-  };
-
-  const handleActivateAll = () => {
-    if (!isJuniorMode) {
-      setJuniorMode(true);
-    }
+  const handleImmerse = () => {
+    setJuniorMode(true);
     setActiveJuniorCategory(null);
     onClose();
-    navigate({ to: '/map' });
+    navigate({ to: '/' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDeactivate = () => {
-    if (isJuniorMode) {
-      toggleJuniorMode();
-    }
+  const handleExitToStandard = () => {
+    setJuniorMode(false);
+    setActiveJuniorCategory(null);
     onClose();
+    navigate({ to: '/' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Header estilo Tu-Turismo */}
-        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white relative border-b border-indigo-900/40">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="relative w-full max-w-lg rounded-3xl overflow-hidden bg-slate-950 text-white shadow-[0_25px_70px_-15px_rgba(6,182,212,0.35)] border border-cyan-500/30 flex flex-col max-h-[92vh]">
+        {/* Barra cromática superior con identidad Tu-Turismo + Jalisco */}
+        <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-teal-400 via-amber-500 to-rose-500" />
+
+        {/* Portada Visual con Arte de Jalisco */}
+        <div className="relative h-48 sm:h-56 w-full overflow-hidden shrink-0">
+          <img
+            src={catedralImg}
+            alt="Experiencia Nuevas Generaciones Jalisco"
+            className="w-full h-full object-cover object-center scale-105"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-indigo-950/70 to-slate-950/30" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-600/35 via-transparent to-amber-500/35" />
+
+          {/* Ilustración geométrica vectorial estilo Agave y Sol Tapatío */}
+          <svg
+            viewBox="0 0 200 200"
+            aria-hidden="true"
+            className="absolute -right-10 -bottom-10 w-48 h-48 text-amber-400/20 pointer-events-none"
+            fill="none"
+          >
+            <circle cx="100" cy="100" r="80" stroke="currentColor" strokeWidth="2.5" strokeDasharray="8 8" />
+            <circle cx="100" cy="100" r="55" stroke="currentColor" strokeWidth="1.5" />
+            <path
+              d="M100 15L114 72L165 40L128 86L185 100L128 114L165 160L114 128L100 185L86 128L35 160L72 114L15 100L72 86L35 40L86 72Z"
+              fill="currentColor"
+            />
+          </svg>
+
+          {/* Botón Cerrar */}
           <button
             type="button"
             onClick={onClose}
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors"
-            aria-label="Cerrar panel"
+            className="absolute top-4 right-4 p-2 rounded-full bg-slate-950/60 hover:bg-slate-900 text-slate-200 hover:text-white border border-white/15 backdrop-blur-md transition-colors cursor-pointer"
+            aria-label="Cerrar aviso"
           >
-            <X size={16} />
+            <X size={18} />
           </button>
 
-          <div className="flex items-center gap-2 mb-2">
-            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
-              <Sparkles size={16} />
-            </div>
-            <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300">
-              Tu-Turismo
+          {/* Distintivo de Edad e Identidad */}
+          <div className="absolute top-4 left-5 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white shadow-lg">
+              <Sparkles size={12} className="stroke-[2.5]" />
+              <span>Público 10 a 16 años</span>
+            </span>
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-slate-950/70 text-cyan-300 border border-cyan-400/40 backdrop-blur-md">
+              <span>Edición Jalisco</span>
             </span>
           </div>
 
-          <h2 className="text-xl font-extrabold tracking-tight text-white">
-            Nuevas Generaciones
-          </h2>
-          <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
-            Experiencia diseñada para jóvenes y adolescentes de 10 a 16 años. Explora rutas interactivas, gastronomía típica, cultura y los mejores puntos de Jalisco.
-          </p>
+          {/* Título Principal sobre la portada */}
+          <div className="absolute bottom-4 left-6 right-6">
+            <p className="text-xs font-extrabold uppercase tracking-widest text-amber-300 mb-1">
+              Aviso de cambio de experiencia
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
+              Estás por emerger en Nuevas Generaciones
+            </h2>
+          </div>
         </div>
 
-        {/* Estadísticas de Exploración */}
-        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-          <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-700 text-center">
-            <div className="px-2">
-              <div className="text-lg font-black text-indigo-600 dark:text-indigo-400">
-                {collectedSpots.length}
+        {/* Cuerpo del Aviso */}
+        <div className="p-6 overflow-y-auto space-y-5">
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-slate-900 via-indigo-950/60 to-slate-900 border border-cyan-500/25">
+            <p className="text-sm text-slate-200 leading-relaxed">
+              Estás a punto de entrar a una <strong className="text-cyan-300 font-bold">experiencia personalizada para jóvenes de 10 a 16 años</strong>. Al continuar, serás redirigido a un <strong className="text-amber-300 font-bold">menú principal exclusivo</strong> con un diseño diferente, creado especialmente para descubrir Jalisco a tu manera.
+            </p>
+          </div>
+
+          {/* Pilares visuales de lo que cambia (Sin emojis, solo iconos vectoriales) */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-teal-500/25 flex flex-col gap-2">
+              <div className="w-8 h-8 rounded-xl bg-teal-500/15 border border-teal-400/30 flex items-center justify-center text-teal-300">
+                <Layers size={16} />
               </div>
-              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
-                Lugares visitados
-              </div>
+              <div className="text-xs font-extrabold text-white">Menú Exclusivo</div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                Interfaz propia con mundos de aventura, ciencia, miradores y antojos tapatíos.
+              </p>
             </div>
-            <div className="px-2">
-              <div className="text-lg font-black text-amber-500">
-                {badges.length}
+
+            <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-amber-500/25 flex flex-col gap-2">
+              <div className="w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-300">
+                <Flame size={16} />
               </div>
-              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
-                Insignias
-              </div>
+              <div className="text-xs font-extrabold text-white">Retos e Insignias</div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                Misiones interactivas por Guadalajara y Jalisco para subir tu nivel de explorador.
+              </p>
             </div>
-            <div className="px-2">
-              <div className="text-lg font-black text-cyan-600 dark:text-cyan-400">
-                {JUNIOR_CATEGORIES.length}
+
+            <div className="p-3.5 rounded-2xl bg-slate-900/90 border border-rose-500/25 flex flex-col gap-2">
+              <div className="w-8 h-8 rounded-xl bg-rose-500/15 border border-rose-400/30 flex items-center justify-center text-rose-300">
+                <ShieldCheck size={16} />
               </div>
-              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
-                Categorías
-              </div>
+              <div className="text-xs font-extrabold text-white">100% Adaptado</div>
+              <p className="text-[11px] text-slate-400 leading-snug">
+                Contenido seleccionado para tu edad; puedes volver al menú clásico cuando quieras.
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Categorías Temáticas */}
-        <div className="p-6 overflow-y-auto space-y-3">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
-              Filtrar por interés
+        {/* Footer de confirmación y redirección */}
+        <div className="p-6 pt-3 bg-slate-900/90 border-t border-slate-800/90 flex flex-col gap-2.5">
+          <button
+            type="button"
+            onClick={handleImmerse}
+            className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-600 to-amber-500 hover:from-cyan-400 hover:via-indigo-500 hover:to-amber-400 text-white font-black text-sm shadow-lg shadow-cyan-500/25 transition-all active:scale-[0.99] flex items-center justify-center gap-2.5 cursor-pointer"
+          >
+            <Compass size={18} className="stroke-[2.5]" />
+            <span>
+              {isJuniorMode
+                ? 'Ir al Menú Principal Nuevas Generaciones'
+                : 'Sumergirme e ir al Menú Exclusivo'}
             </span>
-            {isJuniorMode && activeJuniorCategory && (
-              <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
-                Filtro activo
-              </span>
-            )}
-          </div>
+            <ArrowRight size={17} className="stroke-[2.5]" />
+          </button>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-            {JUNIOR_CATEGORIES.map((cat) => {
-              const Icon = JUNIOR_ICONS[cat.id] || Compass;
-              const isSelected = isJuniorMode && activeJuniorCategory === cat.id;
-
-              return (
-                <button
-                  key={cat.id}
-                  type="button"
-                  onClick={() => handleSelectCategory(cat.id)}
-                  className={`flex items-start gap-3 p-3.5 rounded-2xl text-left transition-all duration-200 border ${
-                    isSelected
-                      ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 shadow-md ring-2 ring-indigo-500/20'
-                      : 'bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-sm'
-                  }`}
-                >
-                  <div
-                    className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
-                      isSelected
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
-                    }`}
-                  >
-                    <Icon size={18} />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">
-                      {cat.name}
-                    </div>
-                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 leading-tight">
-                      {cat.sublabel}
-                    </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Insignias Obtenidas */}
-          {badges.length > 0 && (
-            <div className="pt-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-2">
-                Insignias desbloqueadas
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {badges.map((b) => (
-                  <span
-                    key={b}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
-                  >
-                    <Award size={13} className="text-amber-600 dark:text-amber-400" />
-                    {BADGES_INFO[b]?.label || b}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Footer con Acciones */}
-        <div className="p-6 pt-3 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
-          {!isJuniorMode ? (
+          {isJuniorMode ? (
             <button
               type="button"
-              onClick={handleActivateAll}
-              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 transition-all active:scale-[0.99] flex items-center justify-center gap-2"
+              onClick={handleExitToStandard}
+              className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs border border-slate-700 transition-colors flex items-center justify-center gap-2 cursor-pointer"
             >
-              <Sparkles size={16} />
-              <span>Activar modo Nuevas Generaciones</span>
+              <ArrowLeftRight size={14} className="text-amber-400" />
+              <span>Salir y volver al menú principal estándar</span>
             </button>
           ) : (
             <button
               type="button"
-              onClick={handleDeactivate}
-              className="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm border border-slate-300 dark:border-slate-700 transition-all active:scale-[0.99]"
+              onClick={onClose}
+              className="w-full py-2.5 text-xs font-bold text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
             >
-              Volver al modo estándar
+              Continuar en el menú estándar
             </button>
           )}
-
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-          >
-            Cerrar
-          </button>
         </div>
       </div>
     </div>

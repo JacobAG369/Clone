@@ -1,12 +1,12 @@
-// 1. Agregamos useEffect a la importación de React
 import { useState, useEffect } from 'react';
 import { useLottie } from 'lottie-react';
 import tutuLottie from '../../assets/tutu-lottie.json';
 
-import { Bell, Heart, Map, Shield, User, Download } from 'lucide-react';
-import { Link, useRouterState } from '@tanstack/react-router';
+import { Bell, Heart, Map, Shield, User, Download, Compass, ArrowLeftRight } from 'lucide-react';
+import { Link, useRouterState, useNavigate } from '@tanstack/react-router';
 import { ThemeToggle } from '../ThemeToggle';
 import { useAuthStore } from '../../store/useAuthStore';
+import { useGeneracionesStore } from '../../store/useGeneracionesStore';
 import { useNotifications } from '../../hooks/useNotifications';
 import { usePWAInstall } from '../../hooks/usePWAInstall';
 import { NotificationPanel } from '../ui/NotificationPanel';
@@ -14,11 +14,12 @@ import { NotificationPanel } from '../ui/NotificationPanel';
 export function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  const { unreadCount } = useNotifications();
+  const { isJuniorMode, setJuniorMode, setActiveJuniorCategory } = useGeneracionesStore();
+  const { unreadCount, notificationsQuery } = useNotifications();
   const { isInstallable, installApp } = usePWAInstall();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const navigate = useNavigate();
 
-  // 2. NUEVOS ESTADOS PARA CONTROLAR EL SCROLL
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
@@ -27,28 +28,22 @@ export function Header() {
   });
   const isMapRoute = pathname.startsWith('/map');
 
-  // 3. EFECTO QUE DETECTA LA DIRECCIÓN DEL SCROLL
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Si bajamos (current > last) y ya pasamos los primeros 50px, ocultamos el header
       if (currentScrollY > lastScrollY && currentScrollY > 50) {
         setIsVisible(false);
       } else {
-        // Si subimos, lo mostramos
         setIsVisible(true);
       }
 
-      // Actualizamos la última posición
       setLastScrollY(currentScrollY);
     };
 
     window.addEventListener('scroll', handleScroll);
-
-    // Limpieza del event listener al desmontar el componente
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]); // El efecto se vuelve a ejecutar cada vez que cambia lastScrollY
+  }, [lastScrollY]);
 
   const { View } = useLottie({
     animationData: tutuLottie,
@@ -59,25 +54,60 @@ export function Header() {
     }
   });
 
-  // 4. MODIFICAMOS LAS CLASES DEL HEADER PARA APLICAR LA ANIMACIÓN
+  const handleExitJuniorMode = () => {
+    setJuniorMode(false);
+    setActiveJuniorCategory(null);
+    navigate({ to: '/' });
+  };
+
   return (
     <header
-      className={`sticky top-0 z-50 bg-white/85 dark:bg-slate-900/85 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 transition-all duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}
+      className={`sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300 ease-in-out ${
+        isVisible ? 'translate-y-0' : '-translate-y-full'
+      } ${
+        isJuniorMode
+          ? 'bg-slate-950/90 border-amber-500/30 shadow-[0_4px_20px_-4px_rgba(6,182,212,0.2)]'
+          : 'bg-white/85 dark:bg-slate-900/85 border-slate-200/80 dark:border-slate-800'
+      }`}
     >
-      <div className="container mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
+      {isJuniorMode && (
+        <div className="h-1 w-full bg-gradient-to-r from-cyan-400 via-amber-500 to-rose-500" />
+      )}
 
+      <div className="container mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
         {/* Logo Area */}
-        <Link to="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity shrink-0" title="Tu-Turismo Logo">
-          <div className="flex-shrink-0 drop-shadow-sm h-12 sm:h-14 flex items-center">
-            {View}
-          </div>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-85 transition-opacity shrink-0" title="Tu-Turismo Logo">
+            <div className="flex-shrink-0 drop-shadow-sm h-12 sm:h-14 flex items-center">
+              {View}
+            </div>
+          </Link>
+
+          {isJuniorMode && (
+            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-slate-700/80">
+              <Link
+                to="/"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-amber-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-extrabold tracking-wide hover:border-amber-400/60 transition-colors"
+              >
+                <Compass className="w-3.5 h-3.5 text-amber-400" />
+                <span>Menú Joven 10-16</span>
+              </Link>
+              <button
+                type="button"
+                onClick={handleExitJuniorMode}
+                title="Salir al menú estándar"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold border border-slate-700 transition-colors cursor-pointer"
+              >
+                <ArrowLeftRight className="w-3 h-3 text-amber-400" />
+                <span>Modo Clásico</span>
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Navigation & Profile */}
         <nav className="flex items-center">
           <div className="flex items-center gap-1.5 sm:gap-3 md:gap-4">
-
-            {/* Botón de Instalar PWA cuando esté disponible en PC y móvil */}
             {isInstallable && (
               <button
                 type="button"
@@ -91,21 +121,27 @@ export function Header() {
               </button>
             )}
 
-            {/* En móvil el mapa ya está en BottomNavBar */}
             <Link
               to="/map"
               title="Ver mapa"
-              className="hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className={`hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
+                isJuniorMode
+                  ? 'bg-slate-800/90 text-cyan-300 border border-slate-700 hover:bg-slate-800 hover:border-cyan-400/50'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
             >
               <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
 
-            {/* En móvil Favoritos ya está en BottomNavBar */}
             {isAuthenticated && (
               <Link
                 to="/favorites"
                 title="Mis Favoritos"
-                className="hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                className={`hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
+                  isJuniorMode
+                    ? 'bg-slate-800/90 text-amber-300 border border-slate-700 hover:bg-slate-800 hover:border-amber-400/50'
+                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                }`}
               >
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
@@ -115,8 +151,18 @@ export function Header() {
               <div className="relative">
                 <button
                   type="button"
-                  onClick={() => setIsPanelOpen((prev) => !prev)}
-                  className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  onClick={() => {
+                    const nextState = !isPanelOpen;
+                    setIsPanelOpen(nextState);
+                    if (nextState) {
+                      notificationsQuery?.refetch?.();
+                    }
+                  }}
+                  className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
+                    isJuniorMode
+                      ? 'bg-slate-800/90 text-slate-200 border border-slate-700 hover:bg-slate-800'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
                   aria-label="Notificaciones"
                 >
                   <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -148,7 +194,11 @@ export function Header() {
             <Link
               to={isAuthenticated ? '/profile' : '/login'}
               title={isAuthenticated ? 'Mi Perfil' : 'Iniciar Sesión'}
-              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+              className={`flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
+                isJuniorMode
+                  ? 'bg-slate-800/90 text-slate-200 border border-slate-700 hover:bg-slate-800'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+              }`}
             >
               <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
