@@ -83,7 +83,7 @@ export const TopRatedBubble = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-20 md:bottom-5 right-3 sm:right-6 z-40 flex flex-col items-end">
       {/* Scroll to Top Button */}
       <button
         onClick={scrollToTop}
@@ -96,7 +96,7 @@ export const TopRatedBubble = () => {
 
       {/* Modal / Card flotante expandido */}
       {isOpen && (
-        <div className="mb-4 w-80 sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div className="mb-3 w-[calc(100vw-1.5rem)] max-w-sm sm:w-96 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border border-slate-200/80 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300">
           {/* Header del widget */}
           <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 p-5 text-white relative">
             <button
@@ -186,7 +186,7 @@ export const TopRatedBubble = () => {
       {/* Botón flotante / Burbuja */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center gap-3 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white p-4 sm:px-6 sm:py-4 rounded-full shadow-[0_10px_25px_-5px_rgba(245,158,11,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 border-2 border-white/30 dark:border-slate-800"
+        className="group relative flex items-center gap-2.5 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white p-3.5 sm:px-5 sm:py-3.5 rounded-full shadow-[0_10px_25px_-5px_rgba(245,158,11,0.5)] transition-all duration-300 hover:scale-105 active:scale-95 border-2 border-white/80 dark:border-slate-800"
         title="Lugares con mejor puntuación"
       >
         <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5">

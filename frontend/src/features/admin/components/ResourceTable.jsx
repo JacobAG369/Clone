@@ -31,7 +31,7 @@ export function ResourceTable({ title, items, resourceType, onEdit, onDelete, is
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
