@@ -51,19 +51,13 @@ export const adminApi = {
   // ── CRUD de escritura (admin) ─────────────────────────────────────── //
   createResource: async ({ resourceType, formData }) => {
     const resource = ADMIN_RESOURCE[resourceType];
-    const isMultiPart = formData instanceof FormData;
-    const response = await api.post(`/core/admin/${resource}/`, formData, {
-      headers: isMultiPart ? { 'Content-Type': 'multipart/form-data' } : {}
-    });
+    const response = await api.post(`/core/admin/${resource}/`, formData);
     return response.data.data;
   },
 
   updateResource: async ({ resourceType, resourceId, formData }) => {
     const resource = ADMIN_RESOURCE[resourceType];
-    const isMultiPart = formData instanceof FormData;
-    const response = await api.put(`/core/admin/${resource}/${resourceId}/`, formData, {
-      headers: isMultiPart ? { 'Content-Type': 'multipart/form-data' } : {}
-    });
+    const response = await api.put(`/core/admin/${resource}/${resourceId}/`, formData);
     return response.data.data;
   },
 

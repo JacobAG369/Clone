@@ -14,7 +14,7 @@ import { NotificationPanel } from '../ui/NotificationPanel';
 export function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const user = useAuthStore((state) => state.user);
-  const { isJuniorMode, setJuniorMode, setActiveJuniorCategory } = useGeneracionesStore();
+  const { isJuniorMode, setJuniorMode, setActiveJuniorCategory, syncFromUser } = useGeneracionesStore();
   const { unreadCount, notificationsQuery } = useNotifications();
   const { isInstallable, installApp } = usePWAInstall();
   const [isPanelOpen, setIsPanelOpen] = useState(false);
@@ -27,6 +27,13 @@ export function Header() {
     select: (state) => state.location.pathname,
   });
   const isMapRoute = pathname.startsWith('/map');
+
+  // Sincronizar spots e insignias guardados en el usuario autenticado
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      syncFromUser(user);
+    }
+  }, [isAuthenticated, user, syncFromUser]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -66,12 +73,12 @@ export function Header() {
         isVisible ? 'translate-y-0' : '-translate-y-full'
       } ${
         isJuniorMode
-          ? 'bg-slate-950/90 border-amber-500/30 shadow-[0_4px_20px_-4px_rgba(6,182,212,0.2)]'
+          ? 'bg-white/95 border-amber-300/80 shadow-sm'
           : 'bg-white/85 dark:bg-slate-900/85 border-slate-200/80 dark:border-slate-800'
       }`}
     >
       {isJuniorMode && (
-        <div className="h-1 w-full bg-gradient-to-r from-cyan-400 via-amber-500 to-rose-500" />
+        <div className="h-1 w-full bg-gradient-to-r from-cyan-500 via-teal-400 via-amber-500 to-rose-500" />
       )}
 
       <div className="container mx-auto px-3 sm:px-6 py-2.5 sm:py-3.5 flex items-center justify-between gap-2">
@@ -84,22 +91,22 @@ export function Header() {
           </Link>
 
           {isJuniorMode && (
-            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-slate-700/80">
+            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-slate-200">
               <Link
                 to="/"
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-cyan-500/20 via-indigo-500/20 to-amber-500/20 border border-cyan-400/40 text-cyan-300 text-xs font-extrabold tracking-wide hover:border-amber-400/60 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 border border-amber-300 text-amber-900 text-xs font-extrabold tracking-wide hover:bg-amber-100 transition-colors"
               >
-                <Compass className="w-3.5 h-3.5 text-amber-400" />
+                <Compass className="w-3.5 h-3.5 text-amber-600" />
                 <span>Menú Joven 10-16</span>
               </Link>
               <button
                 type="button"
                 onClick={handleExitJuniorMode}
                 title="Salir al menú estándar"
-                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-semibold border border-slate-700 transition-colors cursor-pointer"
+                className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-[11px] font-bold border border-slate-200 transition-colors cursor-pointer"
               >
-                <ArrowLeftRight className="w-3 h-3 text-amber-400" />
-                <span>Modo Clásico</span>
+                <ArrowLeftRight className="w-3 h-3 text-cyan-600" />
+                <span>Menú Estándar</span>
               </button>
             </div>
           )}
@@ -124,11 +131,7 @@ export function Header() {
             <Link
               to="/map"
               title="Ver mapa"
-              className={`hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
-                isJuniorMode
-                  ? 'bg-slate-800/90 text-cyan-300 border border-slate-700 hover:bg-slate-800 hover:border-cyan-400/50'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+              className="hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               <Map className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>
@@ -137,11 +140,7 @@ export function Header() {
               <Link
                 to="/favorites"
                 title="Mis Favoritos"
-                className={`hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
-                  isJuniorMode
-                    ? 'bg-slate-800/90 text-amber-300 border border-slate-700 hover:bg-slate-800 hover:border-amber-400/50'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                }`}
+                className="hidden md:flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
                 <Heart className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
@@ -158,11 +157,7 @@ export function Header() {
                       notificationsQuery?.refetch?.();
                     }
                   }}
-                  className={`relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
-                    isJuniorMode
-                      ? 'bg-slate-800/90 text-slate-200 border border-slate-700 hover:bg-slate-800'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-                  }`}
+                  className="relative flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                   aria-label="Notificaciones"
                 >
                   <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -194,11 +189,7 @@ export function Header() {
             <Link
               to={isAuthenticated ? '/profile' : '/login'}
               title={isAuthenticated ? 'Mi Perfil' : 'Iniciar Sesión'}
-              className={`flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full transition-colors ${
-                isJuniorMode
-                  ? 'bg-slate-800/90 text-slate-200 border border-slate-700 hover:bg-slate-800'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
-              }`}
+              className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
             >
               <User className="w-4 h-4 sm:w-5 sm:h-5" />
             </Link>

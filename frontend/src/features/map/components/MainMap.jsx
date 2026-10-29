@@ -317,8 +317,6 @@ export default function MainMap() {
           selectedMarkerId={selectedMarkerId}
           onMarkerClick={(id) => {
             setSelectedMarkerId(id);
-            const m = filteredMarkers.find(fm => fm.id === id);
-            if (m) setQrMarker(m);
           }}
         />
 
@@ -341,6 +339,7 @@ export default function MainMap() {
       <MapSidebar
         marker={selectedMarker}
         onClose={() => setSelectedMarkerId(null)}
+        onOpenQR={(m) => setQrMarker(m)}
       />
 
       {/* 6. Modal de Filtros Avanzados (Punto 6) */}

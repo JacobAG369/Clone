@@ -41,47 +41,87 @@ const schemas = {
   }),
 };
 
+function extractExistingImageUrl(initialData) {
+  const rawImg =
+    initialData?.imagen_url ||
+    initialData?.imagen ||
+    (Array.isArray(initialData?.imagenes) ? initialData.imagenes[0] : initialData?.imagenes) ||
+    null;
+
+  if (!rawImg || typeof rawImg !== 'string') return null;
+  const trimmed = rawImg.trim();
+  if (!trimmed) return null;
+  if (trimmed.startsWith('data:image/')) return trimmed;
+  if (trimmed.startsWith('[')) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed) && parsed[0]) return String(parsed[0]).trim();
+    } catch {
+      return trimmed.replace(/^[[\]"\s]+|[[\]"\s]+$/g, '');
+    }
+  }
+  return trimmed;
+}
+
 function getDefaultValues(resourceType, initialData) {
   const coordinates = initialData?.ubicacion?.coordinates || [];
 
-  // Parse fecha properly - handle ISO strings, timestamps, and date objects
   let fechaValue = '';
-  if (initialData?.fecha) {
-    const fechaStr = String(initialData.fecha);
-    // If it's already in YYYY-MM-DD format, use as is
+  const rawFecha = initialData?.fecha || initialData?.fecha_inicio;
+  if (rawFecha) {
+    const fechaStr = String(rawFecha);
     if (/^\d{4}-\d{2}-\d{2}/.test(fechaStr)) {
       fechaValue = fechaStr.slice(0, 10);
     } else {
-      // Try to parse as ISO date and convert to YYYY-MM-DD
       try {
         const date = new Date(fechaStr);
         if (!isNaN(date.getTime())) {
           fechaValue = date.toISOString().slice(0, 10);
         }
-      } catch (e) {
+      } catch {
         fechaValue = '';
       }
     }
   }
 
+  const rawRating = initialData?.rating ?? initialData?.rating_promedio ?? initialData?.calificacion ?? 5;
+  const normalizedRating =
+    rawRating !== null && rawRating !== undefined && !isNaN(Number(rawRating)) && Number(rawRating) > 0
+      ? Math.min(5, Math.max(1, Math.round(Number(rawRating))))
+      : 5;
+
   return {
     nombre: initialData?.nombre || '',
     descripcion: initialData?.descripcion || '',
-    categoria_id: initialData?.categoria_id || (initialData?.categoria && typeof initialData.categoria === 'string' && initialData.categoria.length === 24 ? initialData.categoria : '') || '',
+    categoria_id:
+      initialData?.categoria_id ||
+      (initialData?.categoria && typeof initialData.categoria === 'string' && initialData.categoria.length === 24
+        ? initialData.categoria
+        : '') ||
+      '',
     direccion: initialData?.direccion || '',
     telefono: initialData?.telefono || '',
     horario: initialData?.horario || '',
-    web: initialData?.web || '',
+    web: initialData?.web || initialData?.sitio_web || '',
     fecha: fechaValue,
     latitud: coordinates[1] ?? (initialData?.coordenadas?.lat ?? ''),
     longitud: coordinates[0] ?? (initialData?.coordenadas?.lng ?? ''),
-    rating: initialData?.rating ?? initialData?.rating_promedio ?? initialData?.calificacion ?? 5,
+    rating: normalizedRating,
     imagen: null,
     resourceType,
   };
 }
 
-export function ResourceFormDialog({ open, onOpenChange, resourceType, categories = [], initialData, onSubmit, isPending, formErrors = {} }) {
+export function ResourceFormDialog({
+  open,
+  onOpenChange,
+  resourceType,
+  categories = [],
+  initialData,
+  onSubmit,
+  isPending,
+  formErrors = {},
+}) {
   const schema = useMemo(() => schemas[resourceType], [resourceType]);
   const { validateAndSetFile, previewUrl, clearPreview } = useImageUpload();
 
@@ -93,7 +133,12 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
   useEffect(() => {
     const defaults = getDefaultValues(resourceType, initialData);
     if (resourceType === 'lugares' && !defaults.categoria_id && initialData?.categoria && Array.isArray(categories)) {
-      const match = categories.find(c => c.nombre?.toLowerCase() === initialData.categoria?.toLowerCase() || c.id === initialData.categoria || c._id === initialData.categoria);
+      const match = categories.find(
+        (c) =>
+          c.nombre?.toLowerCase() === initialData.categoria?.toLowerCase() ||
+          c.id === initialData.categoria ||
+          c._id === initialData.categoria
+      );
       if (match) {
         defaults.categoria_id = match.id || match._id;
       }
@@ -103,34 +148,25 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData, resourceType, categories]);
 
-  // Fallback al preview de datos iniciales si no hay archivo nuevo
-  const rawInitialImg = initialData?.imagen_url || initialData?.imagen || (Array.isArray(initialData?.imagenes) ? initialData.imagenes[0] : initialData?.imagenes) || null;
-  const displayUrl = previewUrl || (typeof rawInitialImg === 'string' && rawInitialImg ? rawInitialImg.replace(/[[\]"]/g, '') : null);
+  const existingImageUrl = extractExistingImageUrl(initialData);
+  const displayUrl = previewUrl || existingImageUrl;
 
   const handleSubmit = (values) => {
     const payload = new FormData();
 
     Object.entries(values).forEach(([key, value]) => {
-      if (value === null || value === undefined || value === '') {
+      if (key === 'imagen') {
         return;
       }
-
-      if (key === 'imagen') {
-        if (value instanceof File) {
-          payload.append('imagen', value);
-        } else if (initialData?.imagen_url || initialData?.imagen) {
-          const existingUrl = initialData?.imagen_url || initialData?.imagen || (Array.isArray(initialData?.imagenes) ? initialData.imagenes[0] : null);
-          if (existingUrl) {
-            payload.append('imagen_url', existingUrl);
-            payload.append('imagen', existingUrl);
-          }
-        }
+      if (value === null || value === undefined || value === '') {
         return;
       }
 
       if (key === 'categoria_id') {
         payload.append('categoria_id', value);
-        const selectedCat = (Array.isArray(categories) ? categories : []).find(c => (c.id || c._id) === value);
+        const selectedCat = (Array.isArray(categories) ? categories : []).find(
+          (c) => (c.id || c._id) === value
+        );
         if (selectedCat && selectedCat.nombre) {
           payload.append('categoria', selectedCat.nombre);
         } else if (initialData?.categoria) {
@@ -142,6 +178,14 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
       payload.append(key, value);
     });
 
+    // Adjuntar archivo nuevo o preservar imagen existente al editar
+    if (values.imagen instanceof File) {
+      payload.append('imagen', values.imagen);
+    } else if (existingImageUrl) {
+      payload.append('imagen_url', existingImageUrl);
+      payload.append('imagen', existingImageUrl);
+    }
+
     onSubmit(payload);
   };
 
@@ -150,7 +194,9 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
       <DialogContent className="max-w-full sm:max-w-3xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle>{initialData ? 'Editar recurso' : 'Crear recurso'}</DialogTitle>
-          <DialogDescription>Completa la informacion oficial y carga una imagen representativa.</DialogDescription>
+          <DialogDescription>
+            Completa la informacion oficial y carga una imagen representativa.
+          </DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -176,11 +222,13 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
                   name="rating"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel htmlFor="admin-resource-rating">Rating oficial</FormLabel>
+                      <FormLabel htmlFor="admin-resource-rating">Rating oficial (1 a 5)</FormLabel>
                       <FormControl>
                         <Select {...field} id="admin-resource-rating" name="rating">
                           {[1, 2, 3, 4, 5].map((value) => (
-                            <option key={value} value={value}>{value}</option>
+                            <option key={value} value={value}>
+                              {value} {value === 1 ? 'estrella' : 'estrellas'}
+                            </option>
                           ))}
                         </Select>
                       </FormControl>
@@ -200,7 +248,9 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
                           <Select {...field} id="admin-resource-category" name="categoria_id">
                             <option value="">Selecciona una categoria</option>
                             {categories.map((category) => (
-                              <option key={category.id || category._id} value={category.id || category._id}>{category.nombre}</option>
+                              <option key={category.id || category._id} value={category.id || category._id}>
+                                {category.nombre}
+                              </option>
                             ))}
                           </Select>
                         </FormControl>
@@ -341,7 +391,7 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
                 name="imagen"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="admin-resource-image">Imagen</FormLabel>
+                    <FormLabel htmlFor="admin-resource-image">Imagen (JPG, PNG o WebP, máx. 2MB)</FormLabel>
                     <FormControl>
                       <Input
                         id="admin-resource-image"
@@ -355,7 +405,6 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
                           if (file && validateAndSetFile(file)) {
                             field.onChange(file);
                           } else {
-                            // Si la validación falla, limpiar el campo
                             field.onChange(null);
                             event.target.value = '';
                           }
@@ -364,9 +413,7 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
                     </FormControl>
                     <FormMessage />
                     {formErrors?.imagen && (
-                      <p className="mt-1 text-sm font-medium text-red-500">
-                        {formErrors.imagen[0]}
-                      </p>
+                      <p className="mt-1 text-sm font-medium text-red-500">{formErrors.imagen[0]}</p>
                     )}
                   </FormItem>
                 )}

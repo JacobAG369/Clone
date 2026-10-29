@@ -1,10 +1,12 @@
 /**
  * useGeneracionesStore — estado global para el modo "Nuevas Generaciones"
  * (experiencia para jóvenes y adolescentes de 10 a 16 años).
- * Persiste en localStorage para mantener el estado entre sesiones.
+ * Sincroniza los spots e insignias con la cuenta del usuario autenticado en MongoDB.
  */
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import api from '../api/axios';
+import { useAuthStore } from './useAuthStore';
 
 export const JUNIOR_CATEGORIES = [
   {
@@ -13,8 +15,8 @@ export const JUNIOR_CATEGORIES = [
     label: 'Aventura',
     iconName: 'Compass',
     sublabel: 'Parques, zoológicos y deportes',
-    color: 'from-blue-600 to-indigo-600',
-    activeClass: 'bg-blue-600 text-white border-blue-400',
+    color: 'from-teal-500 to-cyan-600',
+    activeClass: 'bg-teal-600 text-white border-teal-400',
     keywords: [
       'parque', 'aventura', 'deporte', 'zoológico', 'acuario', 'bici', 'skate',
       'ecoturismo', 'natural', 'bosque', 'selva', 'lago', 'cascada', 'cañón',
@@ -27,7 +29,7 @@ export const JUNIOR_CATEGORIES = [
     label: 'Antojos',
     iconName: 'UtensilsCrossed',
     sublabel: 'Nieves, postres y comida típica',
-    color: 'from-amber-600 to-orange-600',
+    color: 'from-amber-500 to-orange-600',
     activeClass: 'bg-orange-600 text-white border-orange-400',
     keywords: [
       'nieve', 'dulce', 'pastelería', 'café', 'heladería', 'torta', 'taco',
@@ -41,8 +43,8 @@ export const JUNIOR_CATEGORIES = [
     label: 'Curiosidades',
     iconName: 'FlaskConical',
     sublabel: 'Museos interactivos, ciencia e historia',
-    color: 'from-purple-600 to-violet-600',
-    activeClass: 'bg-purple-600 text-white border-purple-400',
+    color: 'from-indigo-600 to-violet-600',
+    activeClass: 'bg-indigo-600 text-white border-indigo-400',
     keywords: [
       'museo', 'ciencia', 'historia', 'planetario', 'exposición', 'cultura',
       'arte', 'teatro', 'cabañas', 'trompo', 'arqueol', 'templo', 'palacio',
@@ -55,7 +57,7 @@ export const JUNIOR_CATEGORIES = [
     label: 'Spots de Foto',
     iconName: 'Camera',
     sublabel: 'Miradores, murales y panorámicas',
-    color: 'from-rose-600 to-pink-600',
+    color: 'from-rose-500 to-amber-500',
     activeClass: 'bg-rose-600 text-white border-rose-400',
     keywords: [
       'mirador', 'mural', 'letras', 'arte', 'urbano', 'fotografia', 'plaza',
@@ -65,6 +67,14 @@ export const JUNIOR_CATEGORIES = [
   },
 ];
 
+function computeBadges(spotsCount, currentBadges = []) {
+  const next = new Set(Array.isArray(currentBadges) ? currentBadges : []);
+  if (spotsCount >= 3) next.add('explorador_bronce');
+  if (spotsCount >= 10) next.add('explorador_plata');
+  if (spotsCount >= 25) next.add('explorador_oro');
+  return Array.from(next);
+}
+
 export const useGeneracionesStore = create(
   persist(
     (set, get) => ({
@@ -72,6 +82,7 @@ export const useGeneracionesStore = create(
       activeJuniorCategory: null,
       badges: [],
       collectedSpots: [],
+      isSyncingSpot: false,
 
       toggleJuniorMode: () =>
         set((state) => ({
@@ -86,6 +97,25 @@ export const useGeneracionesStore = create(
           activeJuniorCategory: state.activeJuniorCategory === categoryId ? null : categoryId,
         })),
 
+      syncFromUser: (user) => {
+        if (!user) {
+          set({ collectedSpots: [], badges: [] });
+          return;
+        }
+        const prefs = user.preferences || {};
+        const userSpots = Array.isArray(prefs.collected_spots)
+          ? prefs.collected_spots.map(String)
+          : [];
+        const userBadges = computeBadges(
+          userSpots.length,
+          Array.isArray(prefs.badges) ? prefs.badges : []
+        );
+        set({
+          collectedSpots: userSpots,
+          badges: userBadges,
+        });
+      },
+
       unlockBadge: (badgeId) =>
         set((state) => ({
           badges: state.badges.includes(badgeId)
@@ -93,15 +123,53 @@ export const useGeneracionesStore = create(
             : [...state.badges, badgeId],
         })),
 
-      collectSpot: (spotId) => {
+      collectSpot: async (spotId) => {
+        const authState = useAuthStore.getState();
+        if (!authState.isAuthenticated || !authState.user) {
+          return { ok: false, reason: 'unauthenticated' };
+        }
+
         const state = get();
-        if (!spotId || state.collectedSpots.includes(spotId)) return;
-        const newSpots = [...state.collectedSpots, spotId];
-        set({ collectedSpots: newSpots });
-        if (newSpots.length >= 3) get().unlockBadge('explorador_bronce');
-        if (newSpots.length >= 10) get().unlockBadge('explorador_plata');
-        if (newSpots.length >= 25) get().unlockBadge('explorador_oro');
+        const normalizedId = String(spotId || '').trim();
+        if (!normalizedId) return { ok: false, reason: 'invalid' };
+        if (state.collectedSpots.includes(normalizedId)) {
+          return { ok: true, alreadyCollected: true };
+        }
+
+        const newSpots = [...state.collectedSpots, normalizedId];
+        const newBadges = computeBadges(newSpots.length, state.badges);
+
+        set({
+          collectedSpots: newSpots,
+          badges: newBadges,
+          isSyncingSpot: true,
+        });
+
+        try {
+          const response = await api.patch('/core/auth/me/', {
+            preferences: {
+              ...(authState.user.preferences || {}),
+              collected_spots: newSpots,
+              badges: newBadges,
+            },
+          });
+          if (response?.data) {
+            useAuthStore.getState().updateUser(response.data);
+          }
+          set({ isSyncingSpot: false });
+          return { ok: true, spotsCount: newSpots.length, badges: newBadges };
+        } catch (err) {
+          console.warn('[useGeneracionesStore] No se pudo sincronizar spot con el servidor:', err);
+          set({ isSyncingSpot: false });
+          return { ok: true, spotsCount: newSpots.length, badges: newBadges };
+        }
       },
+
+      clearUserProgress: () =>
+        set({
+          badges: [],
+          collectedSpots: [],
+        }),
 
       reset: () =>
         set({

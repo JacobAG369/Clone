@@ -55,6 +55,12 @@ api.interceptors.request.use(
       delete config.headers.Authorization;
     }
 
+    // Si el body es FormData, eliminar Content-Type para que el navegador
+    // inyecte automáticamente 'multipart/form-data; boundary=...'
+    if (typeof FormData !== 'undefined' && config.data instanceof FormData) {
+      delete config.headers['Content-Type'];
+    }
+
     return config;
   },
   (error) => Promise.reject(error),

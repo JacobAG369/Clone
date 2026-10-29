@@ -1,4 +1,3 @@
-// el estado de autenticación vive aquí. localStorage incluido. no es elegante, pero cumple su trabajo.
 import { create } from 'zustand';
 
 export const useAuthStore = create((set) => ({
@@ -17,11 +16,19 @@ export const useAuthStore = create((set) => ({
       isAuthenticated: true,
       error: null,
     });
+
+    import('./useGeneracionesStore')
+      .then((m) => m.useGeneracionesStore.getState().syncFromUser(user))
+      .catch(() => {});
   },
 
   updateUser: (user) => {
     localStorage.setItem('user', JSON.stringify(user));
     set({ user });
+
+    import('./useGeneracionesStore')
+      .then((m) => m.useGeneracionesStore.getState().syncFromUser(user))
+      .catch(() => {});
   },
 
   setError: (error) => set({ error }),
@@ -37,5 +44,9 @@ export const useAuthStore = create((set) => ({
       isAuthenticated: false,
       error: null,
     });
+
+    import('./useGeneracionesStore')
+      .then((m) => m.useGeneracionesStore.getState().clearUserProgress())
+      .catch(() => {});
   },
 }));
