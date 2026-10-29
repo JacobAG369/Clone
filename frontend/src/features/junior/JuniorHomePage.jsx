@@ -37,8 +37,21 @@ import {
 } from '../../api/home';
 import { useGeneracionesStore, JUNIOR_CATEGORIES } from '../../store/useGeneracionesStore';
 import { useMapStore } from '../../store/useMapStore';
-import { matchesJuniorCategory } from '../../utils/geo';
 import catedralImg from '../../assets/catedral.jpg';
+
+function matchesJuniorCategory(item, categoryId) {
+  if (!item || !categoryId) return true;
+  const catConfig = JUNIOR_CATEGORIES.find((c) => c.id === categoryId);
+  if (!catConfig || !Array.isArray(catConfig.keywords)) return true;
+  const textToSearch = `${item.nombre || ''} ${item.categoria || ''} ${item.tipo_comida || ''} ${item.tipo || ''} ${item.descripcion || ''} ${item.municipio || ''} ${item.direccion || ''}`.toLowerCase();
+  const hasTag =
+    Array.isArray(item.tags) &&
+    item.tags.some((t) =>
+      catConfig.keywords.some((k) => String(t).toLowerCase().includes(k))
+    );
+  const hasKeyword = catConfig.keywords.some((k) => textToSearch.includes(k));
+  return hasTag || hasKeyword;
+}
 
 const WORLD_THEMES = {
   aventura: {
