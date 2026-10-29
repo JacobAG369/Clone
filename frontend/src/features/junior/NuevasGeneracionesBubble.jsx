@@ -1,10 +1,10 @@
 /**
  * NuevasGeneracionesBubble — burbuja flotante para activar/desactivar
- * el modo "Tu-Turismo Nuevas Generaciones" (UX gamificada para 10-16 años).
- * Solo visible para usuarios turistas o no autenticados.
+ * el modo "Tu-Turismo Nuevas Generaciones" (experiencia adaptada para 10-16 años).
+ * Visible para usuarios turistas o visitantes.
  */
 import { useState } from 'react';
-import { X, Sparkles, Trophy, Star } from 'lucide-react';
+import { Sparkles, Trophy } from 'lucide-react';
 import { useGeneracionesStore } from '../../store/useGeneracionesStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import NuevasGeneracionesPanel from './NuevasGeneracionesPanel';
@@ -14,74 +14,65 @@ export default function NuevasGeneracionesBubble() {
   const { user } = useAuthStore();
   const [showPanel, setShowPanel] = useState(false);
 
-  // Solo visible para turistas o usuarios no autenticados
+  // Solo visible para turistas o usuarios no autenticados (no para admins)
   if (user && user.rol === 'admin') return null;
 
   const badgeCount = badges.length;
 
   return (
     <>
-      {/* Burbuja flotante */}
-      <div className="fixed bottom-24 md:bottom-8 left-4 z-40 flex flex-col items-start gap-2">
+      {/* Botón Flotante Nuevas Generaciones */}
+      <div className="fixed bottom-20 md:bottom-6 left-4 z-40 flex flex-col items-start gap-1">
         <button
+          type="button"
           onClick={() => setShowPanel(true)}
-          className={`group relative flex items-center gap-2 rounded-full shadow-2xl transition-all duration-500 active:scale-95 hover:scale-105 ${
+          className={`group flex items-center gap-2.5 px-3.5 py-2.5 rounded-full shadow-lg backdrop-blur-xl transition-all duration-300 active:scale-95 hover:scale-105 border ${
             isJuniorMode
-              ? 'bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-white px-4 py-3 pr-5'
-              : 'bg-white dark:bg-slate-800 border-2 border-violet-200 dark:border-violet-800 text-slate-700 dark:text-white px-3 py-3'
+              ? 'bg-indigo-600 text-white border-indigo-500 shadow-indigo-600/30'
+              : 'bg-white/95 dark:bg-slate-900/95 text-slate-700 dark:text-slate-200 border-slate-200/80 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500'
           }`}
-          aria-label="Abrir modo Nuevas Generaciones"
-          style={{
-            animation: isJuniorMode
-              ? 'juniorPulse 2s ease-in-out infinite'
-              : 'juniorFloat 3s ease-in-out infinite',
-          }}
+          aria-label="Abrir panel Nuevas Generaciones"
         >
-          {/* Glow effect */}
-          {isJuniorMode && (
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 blur-lg opacity-50 animate-pulse pointer-events-none" />
-          )}
+          <div
+            className={`flex items-center justify-center w-7 h-7 rounded-full transition-transform duration-300 group-hover:scale-110 ${
+              isJuniorMode
+                ? 'bg-white/20 text-white'
+                : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400'
+            }`}
+          >
+            <Sparkles size={15} />
+          </div>
 
-          <div className="relative flex items-center gap-2">
-            <span className="text-xl leading-none">
-              {isJuniorMode ? '🎮' : '🎈'}
+          <div className="flex flex-col text-left">
+            <span className="text-xs font-bold tracking-tight leading-tight">
+              {isJuniorMode ? 'Nuevas Gen' : 'Nuevas Generaciones'}
             </span>
-            {isJuniorMode && (
-              <span className="font-bold text-sm tracking-tight leading-none">
-                Modo Joven
-              </span>
-            )}
-            {badgeCount > 0 && (
-              <span className="flex items-center gap-0.5 bg-amber-400 text-slate-900 text-xs font-bold rounded-full px-1.5 py-0.5 leading-none">
-                <Trophy className="w-3 h-3" />
-                {badgeCount}
-              </span>
-            )}
+            <span
+              className={`text-[10px] leading-tight font-medium ${
+                isJuniorMode ? 'text-indigo-200' : 'text-slate-400 dark:text-slate-500'
+              }`}
+            >
+              {isJuniorMode ? 'Modo Activo' : '10 a 16 años'}
+            </span>
           </div>
-        </button>
 
-        {/* Tooltip pequeño */}
-        {!isJuniorMode && (
-          <div className="ml-1 text-xs text-slate-400 dark:text-slate-500 font-medium">
-            Modo Joven ✨
-          </div>
-        )}
+          {badgeCount > 0 && (
+            <span
+              className={`flex items-center gap-1 text-[11px] font-extrabold rounded-full px-2 py-0.5 leading-none ${
+                isJuniorMode
+                  ? 'bg-white/20 text-white'
+                  : 'bg-amber-100 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 border border-amber-300 dark:border-amber-700'
+              }`}
+            >
+              <Trophy size={11} />
+              {badgeCount}
+            </span>
+          )}
+        </button>
       </div>
 
-      {/* Panel principal */}
+      {/* Modal / Panel descriptivo */}
       {showPanel && <NuevasGeneracionesPanel onClose={() => setShowPanel(false)} />}
-
-      {/* CSS Animations */}
-      <style>{`
-        @keyframes juniorFloat {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-6px); }
-        }
-        @keyframes juniorPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.4); }
-          50% { box-shadow: 0 0 0 12px rgba(167, 139, 250, 0); }
-        }
-      `}</style>
     </>
   );
 }

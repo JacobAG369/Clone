@@ -31,7 +31,7 @@ export function useMapWebsockets() {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
 
       toast({
-        title: `🗓️ Nuevo evento: ${payload.nombre || 'Evento disponible'}`,
+        title: `Nuevo evento: ${payload.nombre || 'Evento disponible'}`,
         description: 'Ya puedes verlo en el mapa.',
       });
     });

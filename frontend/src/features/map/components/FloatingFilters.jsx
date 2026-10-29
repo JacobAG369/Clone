@@ -1,9 +1,16 @@
 import React from 'react';
-import { SlidersHorizontal, ListFilter, Moon, Sun, Monitor } from 'lucide-react';
+import { SlidersHorizontal, ListFilter, Moon, Sun, Monitor, Compass, UtensilsCrossed, FlaskConical, Camera } from 'lucide-react';
 import { CATEGORIES } from '../utils/icons';
 import { useMapStore } from '../../../store/useMapStore';
 import { useThemeStore } from '../../../store/useThemeStore';
 import { useGeneracionesStore, JUNIOR_CATEGORIES } from '../../../store/useGeneracionesStore';
+
+const JUNIOR_ICONS = {
+  aventura: Compass,
+  antojos: UtensilsCrossed,
+  curiosidades: FlaskConical,
+  aesthetic: Camera,
+};
 
 export default function FloatingFilters({ onOpenFilters, markersCount = 0 }) {
   const { activeCategory, setActiveCategory, showResultsPanel, toggleResultsPanel, filters } = useMapStore();
@@ -127,27 +134,42 @@ export default function FloatingFilters({ onOpenFilters, markersCount = 0 }) {
         </button>
       </div>
 
-      {/* 3. Dock de Categorías Junior (Modo Tu-Turismo Nuevas Generaciones 10-16 años) */}
+      {/* 3. Dock de Categorías Junior (Nuevas Generaciones) */}
       {isJuniorMode && (
-        <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-[450] flex gap-2 pointer-events-auto bg-slate-900/60 p-1.5 rounded-3xl backdrop-blur-md shadow-2xl border border-white/10">
+        <div className="absolute bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-[450] flex items-center gap-1.5 p-1.5 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-slate-200/80 dark:border-slate-800 pointer-events-auto max-w-[calc(100%-2rem)] overflow-x-auto no-scrollbar">
+          <div className="px-2 py-1 text-[10px] font-extrabold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 border-r border-slate-200 dark:border-slate-800 whitespace-nowrap hidden sm:block">
+            Nuevas Gen
+          </div>
           {JUNIOR_CATEGORIES.map((cat) => {
+            const Icon = JUNIOR_ICONS[cat.id] || Compass;
             const isActive = activeJuniorCategory === cat.id;
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveJuniorCategory(isActive ? null : cat.id)}
-                className={`flex flex-col items-center gap-1 px-3 py-2 rounded-2xl text-white font-bold text-xs shadow-xl transition-all duration-300 hover:scale-105 active:scale-95 bg-gradient-to-br ${cat.color} ${
-                  isActive ? 'ring-4 ring-white/50 scale-110 shadow-2xl' : 'opacity-85 hover:opacity-100'
+                type="button"
+                onClick={() => setActiveJuniorCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition-all duration-200 whitespace-nowrap ${
+                  isActive
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
                 title={cat.sublabel}
               >
-                <span className="text-lg leading-none">{cat.label.split(' ')[0]}</span>
-                <span className="text-[10px] font-bold leading-tight whitespace-nowrap">
-                  {cat.label.split(' ').slice(1).join(' ')}
-                </span>
+                <Icon size={14} className={isActive ? 'text-white' : 'text-indigo-500 dark:text-indigo-400'} />
+                <span>{cat.name}</span>
               </button>
             );
           })}
+          {activeJuniorCategory && (
+            <button
+              type="button"
+              onClick={() => setActiveJuniorCategory(null)}
+              className="text-[11px] font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 px-2 py-1 transition-colors whitespace-nowrap"
+              title="Mostrar todos"
+            >
+              Ver todos
+            </button>
+          )}
         </div>
       )}
     </>

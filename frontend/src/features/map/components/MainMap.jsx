@@ -13,6 +13,7 @@ import { useThemeStore } from '../../../store/useThemeStore';
 import { useFavorites } from '../../../hooks/useFavorites';
 import { mapApi } from '../../../api/map';
 import { useMapStore } from '../../../store/useMapStore';
+import { useGeneracionesStore } from '../../../store/useGeneracionesStore';
 import { useMapWebsockets } from '../hooks/useMapWebsockets';
 import { getCategoryIcon, getMarkerColorInfo, getCategoryInfo } from '../utils/icons';
 import { clusterMarkers } from '../utils/clustering';
@@ -109,39 +110,6 @@ function UserLocationLayer({ userLocation }) {
   return null;
 }
 
-// Marcador fijo del Kiosco "Estás Aquí"
-const KIOSK_POSITION = [20.6767, -103.3475]; // Plaza de Armas, Guadalajara
-
-function KioskAnchorLayer() {
-  const map = useMap();
-  useEffect(() => {
-    const pulseIcon = L.divIcon({
-      html: `<div class="relative flex items-center justify-center w-12 h-12">
-        <span class="absolute inline-flex w-full h-full rounded-full bg-amber-400 opacity-60 animate-ping"></span>
-        <span class="relative flex items-center justify-center w-10 h-10 bg-gradient-to-br from-amber-400 to-orange-500 border-3 border-white rounded-full shadow-2xl text-white font-bold text-xs">📍</span>
-      </div>`,
-      className: 'bg-transparent border-none',
-      iconSize: [48, 48],
-      iconAnchor: [24, 24],
-    });
-
-    const marker = L.marker(KIOSK_POSITION, { icon: pulseIcon, zIndexOffset: 2000 })
-      .addTo(map)
-      .bindTooltip('📍 Tú estás aquí', { permanent: false, className: 'font-bold text-sm' });
-
-    // Círculos de proximidad (5 min ≈ 400m, 15 min ≈ 1200m)
-    const ring1 = L.circle(KIOSK_POSITION, { radius: 400, color: '#f59e0b', weight: 2, fillOpacity: 0.04, dashArray: '8 4' }).addTo(map);
-    const ring2 = L.circle(KIOSK_POSITION, { radius: 1200, color: '#06b6d4', weight: 1.5, fillOpacity: 0.03, dashArray: '8 4' }).addTo(map);
-
-    return () => {
-      map.removeLayer(marker);
-      map.removeLayer(ring1);
-      map.removeLayer(ring2);
-    };
-  }, [map]);
-  return null;
-}
-
 // Capa de Marcadores con Clustering Progresivo (Punto 3 y 4)
 function MarkersLayer({ markers, favoriteIds, selectedMarkerId, onMarkerClick }) {
   const map = useMap();
@@ -235,6 +203,7 @@ function MarkersLayer({ markers, favoriteIds, selectedMarkerId, onMarkerClick })
 export default function MainMap() {
   const { theme, mapTheme } = useThemeStore();
   const { favoriteItems } = useFavorites();
+  const { isJuniorMode, activeJuniorCategory } = useGeneracionesStore();
   const {
     activeCategory,
     selectedMarkerId,
@@ -269,15 +238,18 @@ export default function MainMap() {
     queryFn: () => mapApi.getMarkers(activeCategory),
   });
 
-  // Si activeCategory es 'favoritos', tomamos el catálogo y filtramos por IDs en favoriteIds
+  // Si estamos en modo Nuevas Generaciones o favoritos, consultamos el catálogo completo para filtrar
   const rawMarkers = useMemo(() => {
+    if (isJuniorMode) {
+      return allMarkers;
+    }
     if (activeCategory === 'favoritos') {
       return allMarkers.filter(m => favoriteIds.includes(m.id));
     }
     return categoryMarkers;
-  }, [activeCategory, allMarkers, categoryMarkers, favoriteIds]);
+  }, [isJuniorMode, activeCategory, allMarkers, categoryMarkers, favoriteIds]);
 
-  // Aplicar filtros avanzados, búsqueda y radio GPS (Punto 1, 6 y 7)
+  // Aplicar filtros avanzados, búsqueda, categorías junior y radio GPS
   const filteredMarkers = useMemo(() => {
     return filterAndSearchMarkers(rawMarkers, {
       searchQuery,
@@ -286,8 +258,10 @@ export default function MainMap() {
       userLocation,
       nearbyRadiusKm,
       exploreNearbyActive,
+      isJuniorMode,
+      activeJuniorCategory,
     });
-  }, [rawMarkers, searchQuery, activeCategory, filters, userLocation, nearbyRadiusKm, exploreNearbyActive]);
+  }, [rawMarkers, searchQuery, activeCategory, filters, userLocation, nearbyRadiusKm, exploreNearbyActive, isJuniorMode, activeJuniorCategory]);
 
   const selectedMarker = useMemo(() => {
     return allMarkers.find(m => m.id === selectedMarkerId) || filteredMarkers.find(m => m.id === selectedMarkerId);
@@ -349,7 +323,6 @@ export default function MainMap() {
         />
 
         <UserLocationLayer userLocation={userLocation} />
-        <KioskAnchorLayer />
 
         <MapUpdater markers={filteredMarkers} selectedCategory={activeCategory} />
         <SelectedMarkerFlyTo selectedMarker={selectedMarker} />

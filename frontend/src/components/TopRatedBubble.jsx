@@ -177,7 +177,7 @@ export const TopRatedBubble = () => {
           {/* Footer modal */}
           <div className="bg-slate-50 dark:bg-slate-800/50 p-3 text-center border-t border-slate-100 dark:border-slate-800">
             <span className="text-[11px] text-slate-400 font-medium">
-              💡 Los lugares más destacados de Jalisco
+              Los lugares más destacados de Jalisco
             </span>
           </div>
         </div>

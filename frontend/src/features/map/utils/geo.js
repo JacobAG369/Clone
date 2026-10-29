@@ -2,6 +2,29 @@
  * Utilidades geoespaciales y de filtrado para el mapa de Tu-Turismo.
  */
 
+const JUNIOR_KEYWORD_MAP = {
+  aventura: [
+    'parque', 'aventura', 'deporte', 'zoológico', 'acuario', 'bici', 'skate',
+    'ecoturismo', 'natural', 'bosque', 'selva', 'lago', 'cascada', 'cañón',
+    'senderismo', 'tirolesa', 'recreativo', 'acuático', 'balneario'
+  ],
+  antojos: [
+    'nieve', 'dulce', 'pastelería', 'café', 'heladería', 'torta', 'taco',
+    'restaurante', 'comida', 'gastronom', 'antojito', 'mercado', 'birria',
+    'chocolate', 'pan', 'churros', 'postre', 'lonchería', 'mariscos'
+  ],
+  curiosidades: [
+    'museo', 'ciencia', 'historia', 'planetario', 'exposición', 'cultura',
+    'arte', 'teatro', 'cabañas', 'trompo', 'arqueol', 'templo', 'palacio',
+    'recorrido', 'galería', 'taller', 'centro cultural'
+  ],
+  aesthetic: [
+    'mirador', 'mural', 'letras', 'arte', 'urbano', 'fotografia', 'plaza',
+    'jardín', 'centro', 'catedral', 'panorámica', 'arquitectura', 'monumento',
+    'fuente', 'paseo', 'malecón', 'kiosco'
+  ],
+};
+
 /**
  * Calcula la distancia en metros entre dos coordenadas usando la fórmula de Haversine.
  */
@@ -38,14 +61,12 @@ export function formatDistance(meters) {
  */
 export function isOpenNow(horario) {
   if (!horario || typeof horario !== 'string') {
-    // Si no tiene horario especificado, asumimos abierto por defecto para turismo público
     return true;
   }
   const lower = horario.toLowerCase();
   if (lower.includes('24 horas') || lower.includes('siempre abierto')) return true;
   if (lower.includes('cerrado permanentemente') || lower.includes('temporalmente cerrado')) return false;
 
-  // Si tiene un formato como "09:00 - 18:00" o "9:00 - 21:00"
   const timeMatch = lower.match(/(\d{1,2}):(\d{2})\s*(?:-|a|to)\s*(\d{1,2}):(\d{2})/);
   if (timeMatch) {
     const now = new Date();
@@ -54,7 +75,6 @@ export function isOpenNow(horario) {
     const endMinutes = parseInt(timeMatch[3], 10) * 60 + parseInt(timeMatch[4], 10);
     
     if (endMinutes < startMinutes) {
-      // Abre tarde y cierra al día siguiente (ej. 18:00 - 02:00)
       return currentMinutes >= startMinutes || currentMinutes <= endMinutes;
     }
     return currentMinutes >= startMinutes && currentMinutes <= endMinutes;
@@ -64,7 +84,7 @@ export function isOpenNow(horario) {
 }
 
 /**
- * Filtra marcadores según la búsqueda de texto y los filtros avanzados seleccionados.
+ * Filtra marcadores según la búsqueda de texto, categoría tradicional o junior, y filtros avanzados.
  */
 export function filterAndSearchMarkers(markers, {
   searchQuery = '',
@@ -73,6 +93,8 @@ export function filterAndSearchMarkers(markers, {
   userLocation = null,
   nearbyRadiusKm = 5,
   exploreNearbyActive = false,
+  isJuniorMode = false,
+  activeJuniorCategory = null,
 }) {
   if (!Array.isArray(markers)) return [];
 
@@ -85,11 +107,19 @@ export function filterAndSearchMarkers(markers, {
       return false;
     }
 
-    // 1. Filtro por categoría (si no es 'all' o 'favoritos', el filtrado lo hace o aquí o por API)
-    if (activeCategory && activeCategory !== 'all' && activeCategory !== 'favoritos') {
+    // 1. Filtrado para Modo Nuevas Generaciones
+    if (isJuniorMode && activeJuniorCategory) {
+      const keywords = JUNIOR_KEYWORD_MAP[activeJuniorCategory] || [];
+      const textToSearch = `${marker.nombre || ''} ${marker.categoria || ''} ${marker.categoria_normalizada || ''} ${marker.tipo_recurso || ''} ${marker.tipo || ''} ${marker.descripcion || ''} ${marker.municipio || ''} ${marker.direccion || ''}`.toLowerCase();
+      const hasTag = Array.isArray(marker.tags) && marker.tags.some(t => keywords.some(k => String(t).toLowerCase().includes(k)));
+      const hasKeyword = keywords.some(k => textToSearch.includes(k));
+      if (!hasTag && !hasKeyword) {
+        return false;
+      }
+    } else if (activeCategory && activeCategory !== 'all' && activeCategory !== 'favoritos') {
+      // Filtrado tradicional por categoría (solo si no estamos en junior category filter)
       const catNorm = marker.categoria_normalizada || 'turismo';
       if (catNorm !== activeCategory && marker.tipo_recurso !== activeCategory) {
-        // También checamos si el usuario busca específicamente en colecciones
         if (activeCategory === 'turismo' && catNorm !== 'turismo') return false;
         if (activeCategory === 'restaurantes' && catNorm !== 'restaurantes') return false;
         if (activeCategory === 'museos' && catNorm !== 'museos') return false;
@@ -97,7 +127,7 @@ export function filterAndSearchMarkers(markers, {
       }
     }
 
-    // 2. Búsqueda por texto (Nombre, categoría o ciudad) - Punto 1
+    // 2. Búsqueda por texto (Nombre, categoría o ciudad)
     if (searchQuery && searchQuery.trim().length > 0) {
       const query = searchQuery.trim().toLowerCase();
       const matchName = (marker.nombre || '').toLowerCase().includes(query);
@@ -110,7 +140,7 @@ export function filterAndSearchMarkers(markers, {
       }
     }
 
-    // 3. Explorar cerca (Punto 7)
+    // 3. Explorar cerca por GPS
     if (exploreNearbyActive && userLocation) {
       const distMeters = calculateDistanceMeters(
         userLocation.lat,
@@ -123,7 +153,7 @@ export function filterAndSearchMarkers(markers, {
       }
     }
 
-    // 4. Filtros Avanzados (Punto 6)
+    // 4. Filtros Avanzados
     if (filters.minRating && filters.minRating > 0) {
       const r = marker.rating || 0;
       if (r < filters.minRating) return false;

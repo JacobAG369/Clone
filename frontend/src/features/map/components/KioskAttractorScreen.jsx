@@ -3,7 +3,7 @@
  * Se activa tras 75s de inactividad. Muestra animación e invita a explorar.
  */
 import { useEffect, useState } from 'react';
-import { MapPin, Star, Utensils, Calendar } from 'lucide-react';
+import { MapPin, Star, Utensils, Calendar, Touchpad } from 'lucide-react';
 
 const HIGHLIGHTS = [
   { icon: MapPin, label: 'Plaza de Armas', sub: 'A 5 min caminando', color: 'from-cyan-500 to-blue-600' },
@@ -92,8 +92,9 @@ export default function KioskAttractorScreen({ onInteract }) {
         <div className="mt-4 flex flex-col items-center gap-3">
           <div className="relative">
             <div className="absolute inset-0 rounded-full bg-cyan-400/30 animate-ping" />
-            <div className="relative text-white text-lg font-bold bg-cyan-500/20 border-2 border-cyan-400/50 backdrop-blur-md rounded-full px-8 py-3">
-              ✋ Toca la pantalla para explorar
+            <div className="relative flex items-center gap-2 text-white text-lg font-bold bg-cyan-500/20 border-2 border-cyan-400/50 backdrop-blur-md rounded-full px-8 py-3">
+              <Touchpad className="w-5 h-5 text-cyan-400" />
+              <span>Toca la pantalla para explorar</span>
             </div>
           </div>
           <p className="text-slate-400 text-xs font-medium">

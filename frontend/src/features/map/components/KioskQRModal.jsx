@@ -4,7 +4,7 @@
  * para garantizar compatibilidad con React 19 y despliegues en Render.
  */
 import { useState } from 'react';
-import { X, Smartphone, Navigation, Copy, Check, ExternalLink } from 'lucide-react';
+import { X, Smartphone, Navigation, Copy, Check, ExternalLink, MapPin } from 'lucide-react';
 
 export default function KioskQRModal({ marker, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -65,8 +65,9 @@ export default function KioskQRModal({ marker, onClose }) {
               {marker.nombre || 'Destino Seleccionado'}
             </h3>
             {marker.municipio && (
-              <p className="text-slate-500 dark:text-slate-400 text-sm text-center mt-1">
-                📍 {marker.municipio}
+              <p className="flex items-center justify-center gap-1 text-slate-500 dark:text-slate-400 text-sm mt-1">
+                <MapPin size={14} className="text-slate-400" />
+                <span>{marker.municipio}</span>
               </p>
             )}
           </div>

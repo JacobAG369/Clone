@@ -112,8 +112,8 @@ export default function MapAdvancedFiltersModal({ isOpen, onClose }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               {[
                 { key: 'openNow', label: 'Abierto ahora', desc: 'Mostrar solo lugares en servicio ahora', icon: Clock },
-                { key: 'petFriendly', label: 'Pet Friendly 🐾', desc: 'Permite el ingreso con mascotas', icon: Heart },
-                { key: 'accessible', label: 'Accesible ♿', desc: 'Instalaciones para silla de ruedas', icon: Accessibility },
+                { key: 'petFriendly', label: 'Pet Friendly', desc: 'Permite el ingreso con mascotas', icon: Heart },
+                { key: 'accessible', label: 'Accesibilidad', desc: 'Instalaciones para silla de ruedas', icon: Accessibility },
                 { key: 'wifi', label: 'Wi-Fi disponible', desc: 'Conexión a internet gratuita', icon: Wifi },
                 { key: 'parking', label: 'Estacionamiento', desc: 'Estacionamiento privado o cercano', icon: Car },
               ].map((toggle) => {

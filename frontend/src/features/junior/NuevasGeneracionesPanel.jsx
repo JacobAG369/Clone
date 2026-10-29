@@ -1,176 +1,226 @@
 /**
- * NuevasGeneracionesPanel — panel completo del modo gamificado para jóvenes.
- * Muestra categorías de aventura, estadísticas y control del modo.
+ * NuevasGeneracionesPanel — panel del modo adaptado para usuarios jóvenes (10 a 16 años).
+ * Permite explorar por intereses juveniles, seguir insignias y activar el filtrado en el mapa.
  */
-import { X, Trophy, Star, Sparkles, Zap, MapPin } from 'lucide-react';
+import React from 'react';
+import { X, Trophy, Sparkles, MapPin, Award, Compass, UtensilsCrossed, FlaskConical, Camera } from 'lucide-react';
 import { useGeneracionesStore, JUNIOR_CATEGORIES } from '../../store/useGeneracionesStore';
 import { useNavigate } from '@tanstack/react-router';
 
+const JUNIOR_ICONS = {
+  aventura: Compass,
+  antojos: UtensilsCrossed,
+  curiosidades: FlaskConical,
+  aesthetic: Camera,
+};
+
 const BADGES_INFO = {
-  explorador_bronce: { label: '🥉 Explorador Bronce', desc: 'Visitaste 3 lugares' },
-  explorador_plata: { label: '🥈 Explorador Plata', desc: 'Visitaste 10 lugares' },
-  explorador_oro: { label: '🥇 Explorador Oro', desc: 'Visitaste 25 lugares' },
+  explorador_bronce: { label: 'Explorador Bronce', desc: 'Visitaste 3 lugares' },
+  explorador_plata: { label: 'Explorador Plata', desc: 'Visitaste 10 lugares' },
+  explorador_oro: { label: 'Explorador Oro', desc: 'Visitaste 25 lugares' },
 };
 
 export default function NuevasGeneracionesPanel({ onClose }) {
-  const { isJuniorMode, toggleJuniorMode, badges, collectedSpots } = useGeneracionesStore();
+  const {
+    isJuniorMode,
+    setJuniorMode,
+    toggleJuniorMode,
+    activeJuniorCategory,
+    setActiveJuniorCategory,
+    badges,
+    collectedSpots,
+  } = useGeneracionesStore();
+
   const navigate = useNavigate();
 
-  const handleActivate = () => {
-    if (!isJuniorMode) toggleJuniorMode();
+  const handleSelectCategory = (categoryId) => {
+    if (!isJuniorMode) {
+      setJuniorMode(true);
+    }
+    setActiveJuniorCategory(categoryId);
+    onClose();
+    navigate({ to: '/map' });
+  };
+
+  const handleActivateAll = () => {
+    if (!isJuniorMode) {
+      setJuniorMode(true);
+    }
+    setActiveJuniorCategory(null);
     onClose();
     navigate({ to: '/map' });
   };
 
   const handleDeactivate = () => {
-    if (isJuniorMode) toggleJuniorMode();
+    if (isJuniorMode) {
+      toggleJuniorMode();
+    }
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div
-        className="w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-8 sm:zoom-in-95 fade-in duration-400"
-        style={{ border: '2px solid rgba(167, 139, 250, 0.3)' }}
-      >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 px-6 pt-6 pb-8 relative overflow-hidden">
-          <div className="absolute inset-0 pointer-events-none">
-            {['🌟', '⚡', '🎮', '🏆', '✨'].map((emoji, i) => (
-              <span
-                key={i}
-                className="absolute text-2xl opacity-20"
-                style={{
-                  left: `${15 + i * 18}%`,
-                  top: `${Math.random() * 60 + 10}%`,
-                  animation: `juniorFloat ${2 + i * 0.5}s ease-in-out infinite`,
-                  animationDelay: `${i * 0.3}s`,
-                }}
-              >
-                {emoji}
-              </span>
-            ))}
-          </div>
-
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden flex flex-col max-h-[90vh]">
+        {/* Header estilo Tu-Turismo */}
+        <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 text-white relative border-b border-indigo-900/40">
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 flex items-center justify-center hover:bg-white/30 transition-colors"
+            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-colors"
+            aria-label="Cerrar panel"
           >
-            <X className="w-4 h-4 text-white" />
+            <X size={16} />
           </button>
 
-          <div className="relative z-10">
-            <div className="text-3xl mb-2">🎈</div>
-            <h2 className="text-white font-black text-2xl leading-tight">
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center justify-center w-8 h-8 rounded-xl bg-indigo-500/20 text-indigo-400 border border-indigo-500/30">
+              <Sparkles size={16} />
+            </div>
+            <span className="text-[11px] font-extrabold uppercase tracking-wider text-indigo-300">
               Tu-Turismo
-              <br />
-              <span className="text-yellow-300">Nuevas Generaciones</span>
-            </h2>
-            <p className="text-white/80 text-sm mt-1 font-medium">
-              ¡Explora Jalisco a tu estilo! Para viajeros de 10 a 16 años 🚀
-            </p>
+            </span>
           </div>
+
+          <h2 className="text-xl font-extrabold tracking-tight text-white">
+            Nuevas Generaciones
+          </h2>
+          <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+            Experiencia diseñada para jóvenes y adolescentes de 10 a 16 años. Explora rutas interactivas, gastronomía típica, cultura y los mejores puntos de Jalisco.
+          </p>
         </div>
 
-        {/* Estadísticas */}
-        <div className="px-6 -mt-4 relative z-10">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-700 p-4 flex justify-around">
-            <div className="text-center">
-              <div className="text-2xl font-black text-violet-600 dark:text-violet-400">
+        {/* Estadísticas de Exploración */}
+        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+          <div className="grid grid-cols-3 divide-x divide-slate-200 dark:divide-slate-700 text-center">
+            <div className="px-2">
+              <div className="text-lg font-black text-indigo-600 dark:text-indigo-400">
                 {collectedSpots.length}
               </div>
-              <div className="text-xs text-slate-500 font-medium">Lugares</div>
+              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
+                Lugares visitados
+              </div>
             </div>
-            <div className="w-px bg-slate-200 dark:bg-slate-700" />
-            <div className="text-center">
-              <div className="text-2xl font-black text-amber-500">
+            <div className="px-2">
+              <div className="text-lg font-black text-amber-500">
                 {badges.length}
               </div>
-              <div className="text-xs text-slate-500 font-medium">Medallas</div>
+              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
+                Insignias
+              </div>
             </div>
-            <div className="w-px bg-slate-200 dark:bg-slate-700" />
-            <div className="text-center">
-              <div className="text-2xl font-black text-cyan-500">
+            <div className="px-2">
+              <div className="text-lg font-black text-cyan-600 dark:text-cyan-400">
                 {JUNIOR_CATEGORIES.length}
               </div>
-              <div className="text-xs text-slate-500 font-medium">Categorías</div>
+              <div className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400">
+                Categorías
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Categorías */}
-        <div className="px-6 py-4">
-          <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">
-            ¿Qué quieres explorar hoy?
-          </p>
-          <div className="grid grid-cols-2 gap-3">
-            {JUNIOR_CATEGORIES.map((cat) => (
-              <button
-                key={cat.id}
-                className={`bg-gradient-to-br ${cat.color} rounded-2xl p-4 text-left shadow-md hover:shadow-lg hover:scale-105 transition-all active:scale-95 text-white`}
-                onClick={() => {
-                  handleActivate();
-                }}
-              >
-                <div className="text-xl mb-1">{cat.label.split(' ')[0]}</div>
-                <div className="font-bold text-sm leading-tight">{cat.label.split(' ').slice(1).join(' ')}</div>
-                <div className="text-white/75 text-xs mt-1 leading-tight">{cat.sublabel}</div>
-              </button>
-            ))}
+        {/* Categorías Temáticas */}
+        <div className="p-6 overflow-y-auto space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+              Filtrar por interés
+            </span>
+            {isJuniorMode && activeJuniorCategory && (
+              <span className="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">
+                Filtro activo
+              </span>
+            )}
           </div>
-        </div>
 
-        {/* Medallas */}
-        {badges.length > 0 && (
-          <div className="px-6 pb-2">
-            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-              Tus Medallas
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {badges.map((b) => (
-                <span
-                  key={b}
-                  className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700 rounded-full px-3 py-1 text-xs font-bold text-amber-700 dark:text-amber-400"
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            {JUNIOR_CATEGORIES.map((cat) => {
+              const Icon = JUNIOR_ICONS[cat.id] || Compass;
+              const isSelected = isJuniorMode && activeJuniorCategory === cat.id;
+
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  onClick={() => handleSelectCategory(cat.id)}
+                  className={`flex items-start gap-3 p-3.5 rounded-2xl text-left transition-all duration-200 border ${
+                    isSelected
+                      ? 'bg-indigo-50 dark:bg-indigo-950/40 border-indigo-500 shadow-md ring-2 ring-indigo-500/20'
+                      : 'bg-white dark:bg-slate-800/80 border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-sm'
+                  }`}
                 >
-                  {BADGES_INFO[b]?.label || b}
-                </span>
-              ))}
-            </div>
+                  <div
+                    className={`flex items-center justify-center w-9 h-9 rounded-xl shrink-0 ${
+                      isSelected
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200'
+                    }`}
+                  >
+                    <Icon size={18} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-bold text-slate-900 dark:text-slate-100 leading-snug">
+                      {cat.name}
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2 leading-tight">
+                      {cat.sublabel}
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
           </div>
-        )}
 
-        {/* Botones de acción */}
-        <div className="p-6 pt-4 flex flex-col gap-3">
+          {/* Insignias Obtenidas */}
+          {badges.length > 0 && (
+            <div className="pt-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 block mb-2">
+                Insignias desbloqueadas
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {badges.map((b) => (
+                  <span
+                    key={b}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+                  >
+                    <Award size={13} className="text-amber-600 dark:text-amber-400" />
+                    {BADGES_INFO[b]?.label || b}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Footer con Acciones */}
+        <div className="p-6 pt-3 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
           {!isJuniorMode ? (
             <button
-              onClick={handleActivate}
-              className="w-full py-4 rounded-2xl bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-500 text-white font-black text-lg shadow-xl hover:shadow-2xl hover:scale-[1.02] transition-all active:scale-98"
+              type="button"
+              onClick={handleActivateAll}
+              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-sm shadow-lg shadow-indigo-600/25 transition-all active:scale-[0.99] flex items-center justify-center gap-2"
             >
-              ⚡ ¡Activar Modo Aventura!
+              <Sparkles size={16} />
+              <span>Activar modo Nuevas Generaciones</span>
             </button>
           ) : (
             <button
+              type="button"
               onClick={handleDeactivate}
-              className="w-full py-3.5 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+              className="w-full py-2.5 px-4 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold text-sm border border-slate-300 dark:border-slate-700 transition-all active:scale-[0.99]"
             >
-              Volver al modo clásico
+              Volver al modo estándar
             </button>
           )}
+
           <button
+            type="button"
             onClick={onClose}
-            className="text-slate-400 text-sm font-medium hover:text-slate-600 transition-colors"
+            className="w-full py-2 text-xs font-semibold text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
           >
-            Ahora no
+            Cerrar
           </button>
         </div>
       </div>
-
-      <style>{`
-        @keyframes juniorFloat {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-8px); }
-        }
-      `}</style>
     </div>
   );
 }
