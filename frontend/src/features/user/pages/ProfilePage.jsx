@@ -1,10 +1,10 @@
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   Settings, LogOut, MapPin, Mail, Phone, Calendar, Star, Sparkles,
-  Send, CheckCircle2, AlertCircle, Loader2, Compass, ShieldCheck, Heart, Award
+  Send, CheckCircle2, AlertCircle, Loader2, Compass, ShieldCheck, Heart, Award, Trash2
 } from 'lucide-react';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useLogoutMutation } from '../../auth/hooks/useLogoutMutation';
 import { sendAiRecommendations } from '../../../api/user';
@@ -12,12 +12,14 @@ import { useFavorites } from '../../../hooks/useFavorites';
 import { LugarCard } from '../../../components/ui/cards/LugarCard';
 import { EventoCard } from '../../../components/ui/cards/EventoCard';
 import { SkeletonCard } from '../../../components/ui/cards/SkeletonCard';
+import { DeleteAccountModal } from '../components/DeleteAccountModal';
 
 export function ProfilePage() {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   const logoutMutation = useLogoutMutation();
   const { favoriteItems, favoritesQuery, isEnriching } = useFavorites();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Redirigir a login si no está autenticado
   useEffect(() => {
@@ -340,7 +342,33 @@ export function ProfilePage() {
           </section>
 
         </div>
+
+        {/* Zona de privacidad y eliminación de cuenta */}
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-3xl p-6 sm:p-7 border border-red-100 dark:border-red-950/60 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <h3 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <Trash2 className="w-4 h-4 text-red-500" />
+              <span>Privacidad y gestión de cuenta</span>
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-xl leading-relaxed">
+              ¿Deseas darte de baja de Tu-Turismo? Esta acción eliminará permanentemente tu perfil, lugares favoritos guardados y notificaciones.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setIsDeleteModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 dark:border-red-900/60 bg-red-50/80 dark:bg-red-950/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/50 text-xs font-bold transition-all shrink-0 active:scale-95 shadow-sm"
+          >
+            <Trash2 size={14} />
+            <span>Eliminar mi cuenta</span>
+          </button>
+        </div>
       </div>
+
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      />
     </div>
   );
 }

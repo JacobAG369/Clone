@@ -35,5 +35,7 @@ export const sendAiRecommendations = async () => {
   return response.data;
 };
 
-
-
+export const deleteAccount = async ({ password, confirmacion }) => {
+  const response = await api.post('/core/auth/me/delete/', { password, confirmacion });
+  return response.data;
+};

@@ -1,16 +1,18 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
-import { Save, ArrowLeft, User, Mail, Phone, Lock, CheckCircle2, Camera, ShieldCheck } from 'lucide-react';
+import { Save, ArrowLeft, User, Mail, Phone, Lock, CheckCircle2, Camera, ShieldCheck, Trash2 } from 'lucide-react';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { updateUserProfile } from '../../../api/user';
 import api from '../../../lib/axios';
+import { DeleteAccountModal } from '../components/DeleteAccountModal';
 
 export function ConfigPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user, updateUser } = useAuthStore();
   const fileInputRef = useRef(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const [formData, setFormData] = useState(() => ({
     nombre: user?.nombre || '',
@@ -394,9 +396,35 @@ export function ConfigPage() {
                 </button>
               </div>
             </form>
+
+            {/* Zona de peligro: Eliminación de cuenta */}
+            <div className="mt-8 pt-6 border-t border-red-100 dark:border-red-950/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h4 className="text-sm font-bold text-red-600 dark:text-red-400 flex items-center gap-1.5">
+                  <Trash2 size={15} />
+                  <span>Zona de peligro</span>
+                </h4>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Eliminar tu cuenta borrará todos tus datos, favoritos y accesos de forma irreversible.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(true)}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 text-xs font-bold transition-all shrink-0 active:scale-95"
+              >
+                <Trash2 size={14} />
+                <span>Eliminar cuenta</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
+
+      <DeleteAccountModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+      />
     </div>
   );
 }

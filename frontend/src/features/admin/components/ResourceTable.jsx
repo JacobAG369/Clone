@@ -22,7 +22,8 @@ export function ResourceTable({ title, items, resourceType, onEdit, onDelete, is
           <TableBody>
             {items.length > 0 ? items.map((item) => {
               const itemId = item.id || item._id;
-              const imageUrl = (item.imagenes?.[0] || item.imagen || null)?.replace(/[[\]"]/g, '');
+              const rawImg = item.imagen_url || item.imagen || (Array.isArray(item.imagenes) ? item.imagenes[0] : item.imagenes) || null;
+              const imageUrl = typeof rawImg === 'string' && rawImg ? rawImg.replace(/[[\]"]/g, '') : null;
               const ratingValue = item.rating ?? item.rating_promedio ?? '-';
 
               return (

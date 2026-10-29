@@ -104,7 +104,8 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
   }, [initialData, resourceType, categories]);
 
   // Fallback al preview de datos iniciales si no hay archivo nuevo
-  const displayUrl = previewUrl || (initialData?.imagenes?.[0] || initialData?.imagen || null)?.replace(/[[\]"]/g, '');
+  const rawInitialImg = initialData?.imagen_url || initialData?.imagen || (Array.isArray(initialData?.imagenes) ? initialData.imagenes[0] : initialData?.imagenes) || null;
+  const displayUrl = previewUrl || (typeof rawInitialImg === 'string' && rawInitialImg ? rawInitialImg.replace(/[[\]"]/g, '') : null);
 
   const handleSubmit = (values) => {
     const payload = new FormData();
@@ -118,7 +119,11 @@ export function ResourceFormDialog({ open, onOpenChange, resourceType, categorie
         if (value instanceof File) {
           payload.append('imagen', value);
         } else if (initialData?.imagen_url || initialData?.imagen) {
-          payload.append('imagen_url', initialData.imagen_url || initialData.imagen);
+          const existingUrl = initialData?.imagen_url || initialData?.imagen || (Array.isArray(initialData?.imagenes) ? initialData.imagenes[0] : null);
+          if (existingUrl) {
+            payload.append('imagen_url', existingUrl);
+            payload.append('imagen', existingUrl);
+          }
         }
         return;
       }
