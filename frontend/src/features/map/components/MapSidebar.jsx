@@ -15,7 +15,9 @@ import {
   Smartphone,
 } from 'lucide-react';
 import { useNavigate } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { useFavorites } from '../../../hooks/useFavorites';
+import { useLocalFavorites } from '../../../hooks/useLocalFavorites';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useGeneracionesStore } from '../../../store/useGeneracionesStore';
 import { getCategoryInfo } from '../utils/icons';
@@ -25,19 +27,24 @@ export default function MapSidebar({ marker, onClose, onOpenQR }) {
   const { isAuthenticated } = useAuthStore();
   const { isJuniorMode, collectedSpots, collectSpot } = useGeneracionesStore();
   const { isFavorite, toggleFavorite, isUpdatingFavorite } = useFavorites();
+  const { isLocalFavorite, toggleLocalFavorite } = useLocalFavorites();
   const [copied, setCopied] = useState(false);
   const navigate = useNavigate();
 
   if (!marker) return null;
 
-  const favorited = isFavorite(marker.id);
+  const favorited = isAuthenticated ? isFavorite(marker.id) : isLocalFavorite(marker.id);
   const isCollected = isAuthenticated && collectedSpots.includes(String(marker.id));
   const catInfo = getCategoryInfo(marker.categoria_normalizada || marker.tipo_recurso || marker.categoria);
   const openStatus = isOpenNow(marker.horario);
 
   const handleFavoriteClick = () => {
     if (!isAuthenticated) {
-      navigate({ to: '/login' });
+      const willAdd = !isLocalFavorite(marker.id);
+      toggleLocalFavorite(marker);
+      if (willAdd) {
+        toast.success('Guardado en favoritos locales (IndexedDB).');
+      }
       return;
     }
     toggleFavorite(marker);
@@ -61,13 +68,17 @@ export default function MapSidebar({ marker, onClose, onOpenQR }) {
           url: shareUrl,
         });
         return;
-      } catch {}
+      } catch {
+        // Fallback al portapapeles si se cancela Web Share
+      }
     }
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch {}
+    } catch {
+      // Portapapeles no disponible en contexto no seguro
+    }
   };
 
   const handleDirections = () => {

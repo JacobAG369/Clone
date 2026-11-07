@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Heart, MapPin, Star, Calendar, Utensils, Sparkles, Trash2, ArrowRight, Compass, WifiOff } from 'lucide-react';
+import { Heart, MapPin, Star, Calendar, Utensils, Sparkles, Trash2, ArrowRight, Compass, WifiOff, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
 import { useFavorites } from '../../../hooks/useFavorites';
 import { useLocalFavorites } from '../../../hooks/useLocalFavorites';
@@ -8,12 +8,12 @@ import { SkeletonCard } from '../../../components/ui/cards/SkeletonCard';
 
 export function FavoritesPage() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const { favoriteItems, favoritesQuery, removeFavoriteMutation, isEnriching } = useFavorites();
+  const { favoriteItems, favoritesQuery, removeFavoriteMutation, isEnriching, pendingSyncCount } = useFavorites();
   const { localFavorites, removeLocalFavorite, localFavoritesCount } = useLocalFavorites();
   const [activeTab, setActiveTab] = useState('todos');
 
   // ---------------------------------------------------------------------------
-  // Vista para usuarios NO autenticados: muestra favoritos locales (localStorage)
+  // Vista para usuarios NO autenticados: muestra favoritos locales (IndexedDB)
   // ---------------------------------------------------------------------------
   if (!isAuthenticated) {
     return (
@@ -24,7 +24,7 @@ export function FavoritesPage() {
           <div className="container mx-auto px-4 max-w-6xl relative z-10">
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-extrabold tracking-wider uppercase mb-4">
               <WifiOff className="w-4 h-4 text-sky-200" />
-              <span>Guardados localmente &bull; Sin cuenta requerida</span>
+              <span>Guardados en IndexedDB &bull; Sin cuenta requerida</span>
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight flex items-center gap-3.5">
               <span>Mis Favoritos</span>
@@ -128,7 +128,7 @@ export function FavoritesPage() {
                             <Star className="w-4 h-4 fill-amber-500" />
                             <span>{rec.rating ? `${Number(rec.rating).toFixed(1)} / 5.0` : 'Destacado'}</span>
                           </div>
-                          <span className="text-slate-400 font-medium">Guardado localmente</span>
+                          <span className="text-cyan-600 dark:text-cyan-400 font-semibold">IndexedDB local</span>
                         </div>
                       </div>
                     </div>
@@ -180,9 +180,17 @@ export function FavoritesPage() {
 
         <div className="container mx-auto px-4 max-w-6xl relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-extrabold tracking-wider uppercase">
-              <Sparkles className="w-4 h-4 text-amber-300" />
-              <span>Colección Personal • Tu-Turismo Suite</span>
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-extrabold tracking-wider uppercase">
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>Colección Personal • Tu-Turismo Suite</span>
+              </div>
+              {pendingSyncCount > 0 && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/25 backdrop-blur-md border border-amber-300/40 text-xs font-bold text-amber-100">
+                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  <span>{pendingSyncCount} en cola Background Sync</span>
+                </div>
+              )}
             </div>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight flex items-center gap-3.5">
               <span>Mis Favoritos</span>
@@ -388,9 +396,17 @@ export function FavoritesPage() {
                           </div>
                         )}
 
-                        <span className="text-slate-400 font-medium">
-                          Guardado
-                        </span>
+                        {fav.sync_status === 'pending_add' ? (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 font-semibold">
+                            <RefreshCw className="w-3 h-3" />
+                            Pendiente sync
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-medium">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            Sincronizado
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

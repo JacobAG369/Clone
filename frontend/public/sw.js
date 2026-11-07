@@ -10,9 +10,12 @@
  *    intenta la red; si falla, devuelve la respuesta cacheada si existe.
  */
 
-const APP_VERSION    = 'tuturismo-v6';
-const SHELL_CACHE    = `${APP_VERSION}-shell`;
-const RUNTIME_CACHE  = `${APP_VERSION}-runtime`;
+const APP_VERSION        = 'tuturismo-v7';
+const SHELL_CACHE        = `${APP_VERSION}-shell`;
+const RUNTIME_CACHE      = `${APP_VERSION}-runtime`;
+const FAVORITES_SYNC_TAG = 'sync-tuturismo-favorites';
+const IDB_NAME           = 'TuTurismoDB';
+const IDB_VERSION        = 1;
 
 // Activos del App Shell que se precachean en el install
 const APP_SHELL_ASSETS = [
@@ -187,4 +190,137 @@ async function staleWhileRevalidate(request, cacheName) {
     .catch(() => cached); // Si falla la red, no rompemos nada
 
   return cached || networkFetch;
+}
+
+// ─────────────────────────────────────────────
+// BACKGROUND SYNC API — Sincronización remota de Favoritos Offline
+// ─────────────────────────────────────────────
+
+self.addEventListener('sync', (event) => {
+  if (event.tag === FAVORITES_SYNC_TAG) {
+    console.log('[SW Sync] Evento Background Sync disparado:', event.tag);
+    event.waitUntil(syncPendingFavorites());
+  }
+});
+
+/** Abre `TuTurismoDB` desde el hilo del Service Worker. */
+function openIdbFromSw() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, IDB_VERSION);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains('favorites')) {
+        const favStore = db.createObjectStore('favorites', { keyPath: 'referencia_id' });
+        favStore.createIndex('by_tipo', 'tipo', { unique: false });
+        favStore.createIndex('by_sync_status', 'sync_status', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('sync_queue')) {
+        const qStore = db.createObjectStore('sync_queue', { keyPath: 'id', autoIncrement: true });
+        qStore.createIndex('by_referencia_id', 'referencia_id', { unique: false });
+      }
+      if (!db.objectStoreNames.contains('sw_meta')) {
+        db.createObjectStore('sw_meta', { keyPath: 'key' });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+/** Lee `sync_config` y todos los elementos de `sync_queue` en una sola transacción. */
+function readSwQueueAndConfig(db) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(['sw_meta', 'sync_queue'], 'readonly');
+    const configReq = tx.objectStore('sw_meta').get('sync_config');
+    const queueReq = tx.objectStore('sync_queue').getAll();
+
+    tx.oncomplete = () => resolve({
+      config: configReq.result || null,
+      queue: Array.isArray(queueReq.result) ? queueReq.result : [],
+    });
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** Actualiza el estado local en `favorites` y elimina la tarea procesada de `sync_queue`. */
+function markQueueItemCompleted(db, item) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(['favorites', 'sync_queue'], 'readwrite');
+    const favStore = tx.objectStore('favorites');
+    const queueStore = tx.objectStore('sync_queue');
+
+    if (item.action === 'REMOVE_FAVORITE') {
+      favStore.delete(item.referencia_id);
+    } else {
+      const getReq = favStore.get(item.referencia_id);
+      getReq.onsuccess = () => {
+        if (getReq.result) {
+          favStore.put({ ...getReq.result, sync_status: 'synced' });
+        }
+      };
+    }
+
+    queueStore.delete(item.id);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/** Ejecuta la petición HTTP correspondiente contra `/api/v1/core/favorites/`. */
+async function sendFavoriteRequestToServer(item, apiBaseUrl, authToken) {
+  const headers = {
+    Accept: 'application/json',
+    Authorization: `Bearer ${authToken}`,
+  };
+
+  if (item.action === 'ADD_FAVORITE') {
+    const res = await fetch(`${apiBaseUrl}/core/favorites/`, {
+      method: 'POST',
+      headers: { ...headers, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tipo: item.tipo, referencia_id: item.referencia_id }),
+    });
+    return res.ok;
+  }
+
+  if (item.action === 'REMOVE_FAVORITE') {
+    const encodedId = encodeURIComponent(item.referencia_id);
+    const res = await fetch(`${apiBaseUrl}/core/favorites/${encodedId}/`, {
+      method: 'DELETE',
+      headers,
+    });
+    return res.ok || res.status === 404;
+  }
+
+  return true;
+}
+
+/** Procesa la cola de favoritos pendientes y avisa a las pestañas activas al concluir. */
+async function syncPendingFavorites() {
+  const db = await openIdbFromSw();
+  try {
+    const { config, queue } = await readSwQueueAndConfig(db);
+    if (queue.length === 0) return;
+    if (!config?.authToken || !config?.apiBaseUrl) {
+      console.warn('[SW Sync] Sin sesión activa; la cola se sincronizará al iniciar sesión.');
+      return;
+    }
+
+    let syncedCount = 0;
+    for (const item of queue) {
+      const confirmed = await sendFavoriteRequestToServer(item, config.apiBaseUrl, config.authToken);
+      if (confirmed) {
+        await markQueueItemCompleted(db, item);
+        syncedCount += 1;
+      }
+    }
+
+    if (syncedCount > 0) {
+      const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      clients.forEach((client) => {
+        client.postMessage({ type: 'FAVORITES_SYNCED', syncedCount });
+      });
+    }
+  } finally {
+    db.close();
+  }
 }

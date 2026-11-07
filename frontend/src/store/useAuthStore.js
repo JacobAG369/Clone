@@ -20,6 +20,10 @@ export const useAuthStore = create((set) => ({
     import('./useGeneracionesStore')
       .then((m) => m.useGeneracionesStore.getState().syncFromUser(user))
       .catch(() => {});
+
+    import('../lib/favoritesSync')
+      .then((m) => m.syncSwSessionMeta(token))
+      .catch(() => {});
   },
 
   updateUser: (user) => {
@@ -47,6 +51,10 @@ export const useAuthStore = create((set) => ({
 
     import('./useGeneracionesStore')
       .then((m) => m.useGeneracionesStore.getState().clearUserProgress())
+      .catch(() => {});
+
+    import('../lib/favoritesDb')
+      .then((m) => m.clearSwSyncConfig())
       .catch(() => {});
   },
 }));
